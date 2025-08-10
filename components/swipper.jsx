@@ -10,7 +10,7 @@ import Image from "next/image";
 const slides = [
 	{
 		title: "Welcome to Turrani Esports!",
-		image: "/1.jpg",
+		image: "https://iili.io/FLyNvVf.jpg",
 	},
 	{
 		title: "Instant Wallet & Rewards",
