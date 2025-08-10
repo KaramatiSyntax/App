@@ -1,0 +1,222 @@
+"use client";
+
+import { useState, useEffect } from 'react';
+import MatchCard from "@/components/MatchCard";
+import { motion } from 'framer-motion';
+import ExpoSlider from "@/components/swipper";
+import { Separator } from "@/components/ui/separator"
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselPagination } from "@/components/ui/carousel";
+
+// Section reveal logic
+const SECTION_KEYS = [
+  "upcoming",
+  "completed",
+  "latest",
+  "featured",
+  "full"
+];
+const SECTION_DELAY = 350; // ms between each section
+
+export default function Home() {
+  const [matches, setMatches] = useState([]);
+  const [error, setError] = useState(null);
+  // UI state (move these up before any use)
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedFormat, setSelectedFormat] = useState('all');
+
+  useEffect(() => {
+    async function fetchMatches() {
+      setError(null);
+      try {
+        const res = await fetch('/api/matches');
+        if (!res.ok) throw new Error('Failed to fetch matches');
+        const data = await res.json();
+        setMatches(data);
+      } catch (err) {
+        setError(err.message || 'Unknown error');
+      }
+    }
+    fetchMatches();
+  }, []);
+
+  if (error) {
+    return <div className="flex justify-center items-center min-h-screen text-red-500">Error: {error}</div>;
+  }
+
+  // Group matches by status/type
+  const upcomingMatches = matches.filter(m => m.status === 'upcoming');
+  const completedMatches = matches.filter(m => m.status === 'completed');
+  const latestMatches = matches.filter(m => m.status === 'running');
+  const featuredMatches = upcomingMatches.filter(m => m.matchType === "br");
+
+  // Helper functions
+  function isMatchFull(match) {
+    return (match.players?.length || 0) >= (match.maxParticipants || 0);
+  }
+
+  function isNotCompleted(match) {
+    return match.status !== 'completed';
+  }
+
+  function isCompleted(match) {
+    return match.status === 'completed';
+  }
+
+  // All matches for filtering
+  const allMatches = [
+    ...upcomingMatches,
+    ...completedMatches,
+    ...latestMatches,
+    ...featuredMatches
+  ];
+
+  // Filtered matches
+  const filteredAllMatches = allMatches.filter(m => {
+    return (selectedCategory === 'all' || m.matchType === selectedCategory) &&
+      (selectedFormat === 'all' || m.matchFormat === selectedFormat);
+  });
+
+  // Featured matches
+  const featuredSectionMatches = allMatches
+    .filter(m => isNotCompleted(m) && !isMatchFull(m))
+    .sort((a, b) => ((a.maxParticipants || 0) - (a.players?.length || 0)) - ((b.maxParticipants || 0) - (b.players?.length || 0)));
+  const featuredMatch = featuredSectionMatches[0] ? [featuredSectionMatches[0]] : [];
+
+  // Latest matches
+  const latestSectionMatches = allMatches
+    .filter(m => isNotCompleted(m) && !isMatchFull(m))
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // Full matches
+  const fullSectionMatches = allMatches.filter(m => isMatchFull(m) && isNotCompleted(m));
+  const completedSectionMatches = allMatches.filter(isCompleted);
+
+  // Helper: get matches for a type
+  function getTypeMatches(type) {
+    let matches = allMatches.filter(m =>
+      m.matchType?.toLowerCase().trim() === type &&
+      isNotCompleted(m) &&
+      !isMatchFull(m)
+    );
+    if (selectedFormat !== 'all') {
+      matches = matches.sort((a, b) => {
+        const aMatch = a.matchFormat?.toLowerCase().trim() === selectedFormat.toLowerCase().trim();
+        const bMatch = b.matchFormat?.toLowerCase().trim() === selectedFormat.toLowerCase().trim();
+        return (bMatch ? 1 : 0) - (aMatch ? 1 : 0);
+      });
+    }
+    return matches;
+  }
+
+  // Lone Wolf, Battle Royale, Clash Squad
+  const loneWolfMatches = getTypeMatches('lw');
+  const battleRoyaleMatches = getTypeMatches('br');
+  const clashSquadMatches = getTypeMatches('cs');
+
+  // Helper for section rendering
+  function renderSliderSection(title, matches, key) {
+    const [api, setApi] = useState(null);
+    const [current, setCurrent] = useState(0);
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+      if (!api) return;
+
+      setCount(api.scrollSnapList().length);
+      setCurrent(api.selectedScrollSnap() + 1);
+
+      api.on("select", () => {
+        setCurrent(api.selectedScrollSnap() + 1);
+      });
+    }, [api, matches.length]);
+
+    return (
+      <motion.div
+        key={key}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-12"
+      >
+        <h1 className="font-[var(--font-titillium)] m-3 text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 drop-shadow-lg">
+          {title}
+        </h1>
+        <div className="mb-6 sm:mb-8" />
+        {matches.length === 0 ? (
+          <div className="text-white/60 text-center py-8 text-base sm:text-lg font-medium">
+            No matches available for this section.
+          </div>
+        ) : (
+          <Carousel setApi={setApi} className="w-full relative">
+            <CarouselContent>
+              {matches.map((match, index) => (
+                <CarouselItem
+                  key={index}
+                  className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
+                >
+                  <motion.div className="h-full">
+                    <MatchCard match={match} />
+                  </motion.div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+            <CarouselPagination count={count} current={current} />
+          </Carousel>
+        )}
+      </motion.div>
+    );
+  }
+
+
+  return (
+    <div className="container mx-auto p-4 min-h-screen">
+      <div className="flex items-center justify-center mb-8">
+        <ExpoSlider />
+      </div>
+
+      <Separator className="mb-8 h-2 bg-white/30" />
+{/* Announcement Section */}
+<div className="mb-6 w-full flex justify-center relative">
+  {/* Background gradient blur */}
+  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-white to-green-500 blur-lg opacity-40 rounded-xl z-0" />
+
+    {/* Foreground content */}
+  <div className="relative text-white px-6 py-4 rounded-xl shadow-lg text-center font-bold text-lg sm:text-xl max-w-3xl w-full border border-white/90 backdrop-blur-sm z-20">
+    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-400">
+      A special Event awaits...
+    </span>
+    <br />
+    <span className="opacity-90 text-sm sm:text-base">
+      Join us this <strong>15th August</strong> for something special.  
+    </span>
+  </div>
+</div>
+
+
+      {/* Upcoming Matches Section */}
+      {renderSliderSection('Upcoming Matches', upcomingMatches, 'upcoming')}
+
+      {/* Featured Section */}
+      {renderSliderSection('Featured Matches', featuredMatch, 'featured')}
+
+      {/* Latest Matches Section */}
+      {renderSliderSection('Latest Matches', latestSectionMatches, 'latest')}
+
+      {/* All Matches section */}
+      {renderSliderSection('All Matches', allMatches, 'allmatches')}
+
+      {/* Completed Matches Section */}
+      {renderSliderSection('Completed Matches', completedSectionMatches, 'completed')}
+
+      {/* Full Matches Section */}
+      {renderSliderSection('Full Matches', fullSectionMatches, 'fullmatches')}
+
+      {/* Type sections */}
+      {renderSliderSection('Lone Wolf', loneWolfMatches, 'lonewolf')}
+      {renderSliderSection('Battle Royale', battleRoyaleMatches, 'battleroyale')}
+      {renderSliderSection('Clash Squad', clashSquadMatches, 'clashsquad')}
+    </div>
+  );
+}
