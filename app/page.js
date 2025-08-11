@@ -115,59 +115,89 @@ export default function Home() {
 
   // Helper for section rendering
   function renderSliderSection(title, matches, key) {
-    const [api, setApi] = useState(null);
-    const [current, setCurrent] = useState(0);
-    const [count, setCount] = useState(0);
+  const [api, setApi] = useState(null);
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
 
-    useEffect(() => {
-      if (!api) return;
+  useEffect(() => {
+    if (!api) return;
 
-      setCount(api.scrollSnapList().length);
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    const handleSelect = () => {
       setCurrent(api.selectedScrollSnap() + 1);
+    };
 
-      api.on("select", () => {
-        setCurrent(api.selectedScrollSnap() + 1);
-      });
-    }, [api, matches.length]);
+    api.on("select", handleSelect);
+    return () => {
+      api.off("select", handleSelect);
+    };
+  }, [api, matches.length]);
 
-    return (
-      <motion.div
-        key={key}
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-12"
+  return (
+    <motion.div
+      key={key}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="mb-12"
+    >
+      {/* Inline styles for gradient animation */}
+      <style>{`
+        @keyframes gradient-move {
+          0% { background-position: 0% 50%; }
+          100% { background-position: 100% 50%; }
+        }
+        .animate-gradient-move {
+          background-size: 200% 200%;
+          animation: gradient-move 4s ease infinite alternate;
+        }
+      `}</style>
+
+      <h1
+        className="font-[var(--font-titillium)] text-xl sm:text-2xl font-bold 
+                   text-transparent bg-clip-text 
+                   bg-gradient-to-r from-cyan-400 via-teal-400 to-blue-500 
+                   drop-shadow-[0_0_8px_rgba(0,255,255,0.4)]
+                   animate-gradient-move"
       >
-        <h1 className="font-[var(--font-titillium)] m-3 text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 drop-shadow-lg">
-          {title}
-        </h1>
-        <div className="mb-6 sm:mb-8" />
-        {matches.length === 0 ? (
-          <div className="text-white/60 text-center py-8 text-base sm:text-lg font-medium">
-            No matches available for this section.
-          </div>
-        ) : (
-          <Carousel setApi={setApi} className="w-full relative">
-            <CarouselContent>
-              {matches.map((match, index) => (
-                <CarouselItem
-                  key={index}
-                  className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
+        {title}
+      </h1>
+
+      <div className="mt-1 mb-5 w-60 lg:w-96 h-[0.5px] bg-gradient-to-l from-cyan-400 via-teal-400 to-blue-500 opacity-80" />
+
+      {matches.length === 0 ? (
+        <div className="text-white/60 text-center py-8 text-base sm:text-lg font-medium">
+          No matches available for this section.
+        </div>
+      ) : (
+        <Carousel setApi={setApi} className="w-full relative">
+          <CarouselContent>
+            {matches.map((match, index) => (
+              <CarouselItem
+                key={index}
+                className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
+              >
+                <motion.div
+                  className="h-full"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <motion.div className="h-full">
-                    <MatchCard match={match} />
-                  </motion.div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-            <CarouselPagination count={count} current={current} />
-          </Carousel>
-        )}
-      </motion.div>
-    );
-  }
+                  <MatchCard match={match} />
+                </motion.div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+
+          <CarouselPrevious />
+          <CarouselNext />
+          <CarouselPagination count={count} current={current} />
+        </Carousel>
+      )}
+    </motion.div>
+  );
+}
 
 
   return (
@@ -177,22 +207,22 @@ export default function Home() {
       </div>
 
       <Separator className="mb-8 h-2 bg-white/30" />
-{/* Announcement Section */}
-<div className="mb-6 w-full flex justify-center relative">
-  {/* Background gradient blur */}
-  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-white to-green-500 blur-lg opacity-40 rounded-xl z-0" />
+      {/* Announcement Section */}
+      <div className="mb-6 w-full flex justify-center relative">
+        {/* Background gradient blur */}
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-white to-green-500 blur-lg opacity-40 rounded-xl z-0" />
 
-    {/* Foreground content */}
-  <div className="relative text-white px-6 py-4 rounded-xl shadow-lg text-center font-bold text-lg sm:text-xl max-w-3xl w-full border border-white/90 backdrop-blur-sm z-20">
-    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-400">
-      A special Event awaits...
-    </span>
-    <br />
-    <span className="opacity-90 text-sm sm:text-base">
-      Join us this <strong>15th August</strong> for something special.  
-    </span>
-  </div>
-</div>
+        {/* Foreground content */}
+        <div className="relative text-white px-6 py-4 rounded-xl shadow-lg text-center font-bold text-lg sm:text-xl max-w-3xl w-full border border-white/90 backdrop-blur-sm z-20">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-400">
+            A special Event awaits...
+          </span>
+          <br />
+          <span className="opacity-90 text-sm sm:text-base">
+            Join us this <strong>15th August</strong> for something special.
+          </span>
+        </div>
+      </div>
 
 
       {/* Upcoming Matches Section */}

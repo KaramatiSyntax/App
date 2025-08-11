@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { format } from "date-fns";
+import { format, isToday, isYesterday, isTomorrow } from 'date-fns';
 import { Calendar, Users, CheckCheck, Trophy, Coins, IndianRupee, Clock, Clipboard, Check, Timer, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -91,7 +91,13 @@ const MatchCard = ({ match }) => {
   const progress = totalSlots > 0 ? (takenSlotsCount / totalSlots) * 100 : 0;
 
   const formatDate = (date) => {
-    return format(new Date(date), 'MMM dd, yyyy');
+    const d = new Date(date);
+
+    if (isToday(d)) return 'Today';
+    if (isYesterday(d)) return 'Yesterday';
+    if (isTomorrow(d)) return 'Tomorrow';
+
+    return format(d, 'MMM dd, yyyy');
   };
 
   const formatTime = (date) => {
@@ -133,9 +139,9 @@ const MatchCard = ({ match }) => {
           <div className="absolute inset-0 p-2 flex flex-col justify-between">
             {/* Top Section */}
             <div className="flex justify-between items-start">
-            { localMatch?.special?.name !== false && (
-              <h3 className="text-xl font-bold text-white">{localMatch.name}</h3>
-            )}
+              {localMatch?.special?.name !== false && (
+                <h3 className="text-xl font-bold text-white">{localMatch.name}</h3>
+              )}
             </div>
 
             {/* Bottom Section */}
@@ -154,10 +160,12 @@ const MatchCard = ({ match }) => {
                         <>
                           <Timer className="h-4 w-4 text-cyan-400" />
                           {timeLeft ? (<>
-                            <span className="flex items-center">
-                              <SlidingNumber value={timeLeft ? timeLeft.hours : 0} />
-                              <span>hrs</span>
-                            </span>
+                            {timeLeft.hours > 0 &&
+                              <span className="flex items-center">
+                                <SlidingNumber value=
+                                  {timeLeft ? timeLeft.hours : 0} />
+                                <span>hrs</span>
+                              </span>}
                             <span className="flex items-center">
                               <SlidingNumber value={timeLeft ? timeLeft.minutes : 0} />
                               <span>Min</span>
@@ -192,15 +200,15 @@ const MatchCard = ({ match }) => {
                   className="h-1.5 bg-white/20 [&>div]:bg-cyan-500"
                 />
                 <div className="flex items-center justify-between gap-1 text-[10px]">
-                <span className="flex items-center gap-1 p-1 py-[.5] text-red-400">
-                  <Coins className="h-4 w-4" />
-                  <span className="font-medium">₹{localMatch.entry === 0 ? "Free" : localMatch.entry} Entry</span>
-                </span>
-                <span className="flex items-center gap-1 p-1 py-[.5] text-green-400">
-                  <Trophy className="h-4 w-4" />
-                  <span className="font-medium">₹{localMatch.winnings} Prize Pool</span>
-                </span>
-              </div>
+                  <span className="flex items-center gap-1 p-1 py-[.5] text-red-400">
+                    <Coins className="h-4 w-4" />
+                    <span className="font-medium">₹{localMatch.entry === 0 ? "Free" : localMatch.entry} Entry</span>
+                  </span>
+                  <span className="flex items-center gap-1 p-1 py-[.5] text-green-400">
+                    <Trophy className="h-4 w-4" />
+                    <span className="font-medium">₹{localMatch.winnings} Prize Pool</span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -230,7 +238,7 @@ const MatchCard = ({ match }) => {
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          
+
           {/* Banner Background */}
           <div className="relative aspect-video w-full">
             <Image
@@ -239,8 +247,8 @@ const MatchCard = ({ match }) => {
               fill
               className="object-cover"
             />
-            { localMatch?.special?.shadow !== false && (
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
+            {localMatch?.special?.shadow !== false && (
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
             )}
             <DialogHeader className="absolute bottom-0 left-0 right-0 p-4">
               <DialogTitle className="text-xl font-bold text-white text-center">{localMatch.name}</DialogTitle>

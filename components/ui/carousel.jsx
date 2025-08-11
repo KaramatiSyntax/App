@@ -194,7 +194,7 @@ function CarouselNext({
 
 function CarouselPagination({ count, current }) {
   return (
-    <div className="absolute -bottom-2 right-2 translate-y-1/2">
+    <div className="absolute -bottom-5 right-2 translate-y-1/2">
       <span className="text-sm text-white/70">
         Match {current} / {count}
       </span>

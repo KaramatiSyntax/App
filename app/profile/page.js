@@ -160,7 +160,7 @@ export default function ProfilePage() {
   // Show authentication required only when not loading and no user data
   if (!userData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 pt-8 pb-24">
           <div className="max-w-6xl mx-auto">
             <Card className="p-6 sm:p-8 rounded-2xl border border-white/20 bg-white/10 dark:bg-white/10 backdrop-blur-xl shadow-2xl">
@@ -197,7 +197,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 pt-8 pb-24">
         {/* Profile Header */}
         <motion.div
