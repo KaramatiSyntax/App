@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Image from "next/image";
 import MatchCard from "@/components/MatchCard";
 import { motion } from 'framer-motion';
 import ExpoSlider from "@/components/swipper";
@@ -115,36 +116,36 @@ export default function Home() {
 
   // Helper for section rendering
   function renderSliderSection(title, matches, key) {
-  const [api, setApi] = useState(null);
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+    const [api, setApi] = useState(null);
+    const [current, setCurrent] = useState(0);
+    const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    if (!api) return;
+    useEffect(() => {
+      if (!api) return;
 
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
-
-    const handleSelect = () => {
+      setCount(api.scrollSnapList().length);
       setCurrent(api.selectedScrollSnap() + 1);
-    };
 
-    api.on("select", handleSelect);
-    return () => {
-      api.off("select", handleSelect);
-    };
-  }, [api, matches.length]);
+      const handleSelect = () => {
+        setCurrent(api.selectedScrollSnap() + 1);
+      };
 
-  return (
-    <motion.div
-      key={key}
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mb-12"
-    >
-      {/* Inline styles for gradient animation */}
-      <style>{`
+      api.on("select", handleSelect);
+      return () => {
+        api.off("select", handleSelect);
+      };
+    }, [api, matches.length]);
+
+    return (
+      <motion.div
+        key={key}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-12"
+      >
+        {/* Inline styles for gradient animation */}
+        <style>{`
         @keyframes gradient-move {
           0% { background-position: 0% 50%; }
           100% { background-position: 100% 50%; }
@@ -155,49 +156,70 @@ export default function Home() {
         }
       `}</style>
 
-      <h1
-        className="font-[var(--font-titillium)] text-xl sm:text-2xl font-bold 
-                   text-transparent bg-clip-text 
-                   bg-gradient-to-r from-cyan-400 via-teal-400 to-blue-500 
-                   drop-shadow-[0_0_8px_rgba(0,255,255,0.4)]
-                   animate-gradient-move"
-      >
-        {title}
-      </h1>
+        <h1
+          className="font-[var(--font-titillium)] text-xl sm:text-2xl font-bold 
+             text-transparent bg-clip-text 
+             bg-gradient-to-r from-cyan-400 via-teal-400 to-blue-500 
+             drop-shadow-[0_0_8px_rgba(0,255,255,0.4)]
+             animate-gradient-move"
+        >
+          {title}
+        </h1>
 
-      <div className="mt-1 mb-5 w-60 lg:w-96 h-[0.5px] bg-gradient-to-l from-cyan-400 via-teal-400 to-blue-500 opacity-80" />
+        <div
+          style={{
+            width: `${title.length * 10}px`,
+          }}
+          className="mt-0.5 mb-6 h-[0.5px] bg-gradient-to-l 
+             from-cyan-400 via-teal-400 to-blue-500 opacity-80"
+        ></div>
 
-      {matches.length === 0 ? (
-        <div className="text-white/60 text-center py-8 text-base sm:text-lg font-medium">
-          No matches available for this section.
-        </div>
-      ) : (
-        <Carousel setApi={setApi} className="w-full relative">
-          <CarouselContent>
-            {matches.map((match, index) => (
-              <CarouselItem
-                key={index}
-                className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
-              >
-                <motion.div
-                  className="h-full"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+        {matches.length === 0 ? (
+          <div className="text-white/60 text-center py-8 text-base font-medium flex flex-col items-center justify-center gap-3">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <Image
+                src="/box.png"
+                alt="No Matches"
+                width={75}
+                height={75}
+                priority
+              />
+            </motion.div>
+            <p className="leading-snug">
+              No matches available for this section.
+            </p>
+          </div>
+        ) : (
+          <Carousel setApi={setApi} className="w-full relative">
+            <CarouselContent>
+              {matches.map((match, index) => (
+                <CarouselItem
+                  key={index}
+                  className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
                 >
-                  <MatchCard match={match} />
-                </motion.div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
+                  <motion.div
+                    className="h-full"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <MatchCard match={match} />
+                  </motion.div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
 
-          <CarouselPrevious />
-          <CarouselNext />
-          <CarouselPagination count={count} current={current} />
-        </Carousel>
-      )}
-    </motion.div>
-  );
-}
+            <CarouselPrevious />
+            <CarouselNext />
+            <CarouselPagination count={count} current={current} />
+          </Carousel>
+        )}
+      </motion.div>
+    );
+  }
 
 
   return (
