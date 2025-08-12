@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { format, isToday, isYesterday, isTomorrow } from 'date-fns';
-import { Calendar, Users, CheckCheck, Trophy, Coins, IndianRupee, Clock, Clipboard, Check, Timer, Settings } from "lucide-react";
+import { Calendar, Users, Trophy, Coins, IndianRupee, Clock, Clipboard, Check, Timer } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import SlotBooker from "@/components/SlotBooker";
 import { Dialog as HeadlessDialog } from "@headlessui/react";
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
-import { SlidingNumber } from '@/components/motion-primitives/sliding-number';
+import { MatchStatus } from './UpcomingMatchTimer';
 
 const MatchCard = ({ match }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +26,8 @@ const MatchCard = ({ match }) => {
   const [localMatch, setLocalMatch] = useState(match);
   const router = useRouter();
   const [copiedField, setCopiedField] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
+
+  console.log("MatchCard Rendered");
 
   // Helper to determine if match is team-based (CS/LW)
   const isTeamMatch = (type) => {
@@ -40,35 +41,6 @@ const MatchCard = ({ match }) => {
     if (f === "squad") return 4;
     return 1; // solo default
   };
-
-  // Calculate time left until match starts
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = new Date().getTime();
-      const matchTime = new Date(localMatch.time).getTime();
-      const difference = matchTime - now;
-
-      if (difference > 0) {
-        const hours = Math.floor(difference / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        return { hours, minutes, seconds };
-      }
-      return null;
-    };
-
-    // Initial calculation
-    setTimeLeft(calculateTimeLeft());
-
-    // Set up interval to update every second
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(timer);
-  }, [localMatch.time]);
 
   // Calculate progress bar values using same logic as SlotBooker
   let totalSlots = 0;
@@ -154,46 +126,7 @@ const MatchCard = ({ match }) => {
                     <Users className="h-4 w-4" />
                     <span>{takenSlotsCount}/{totalSlots} Players</span>
                   </div>
-                  {
-                    <div className="flex items-center gap-2 text-white">
-                      {localMatch.status === 'upcoming' ? (
-                        <>
-                          <Timer className="h-4 w-4 text-cyan-400" />
-                          {timeLeft ? (<>
-                            {timeLeft.hours > 0 &&
-                              <span className="flex items-center">
-                                <SlidingNumber value=
-                                  {timeLeft ? timeLeft.hours : 0} />
-                                <span>hrs</span>
-                              </span>}
-                            <span className="flex items-center">
-                              <SlidingNumber value={timeLeft ? timeLeft.minutes : 0} />
-                              <span>Min</span>
-                            </span>
-                            <span className="flex items-center">
-                              <SlidingNumber value={timeLeft ? timeLeft.seconds : 0} />
-                              <span>Sec</span>
-                            </span>
-                          </>) : (
-                            <span>Waiting for host</span>
-                          )} </>) : (<>
-                            {localMatch.status === 'runing' ? (<>
-                              <motion.div
-                                animate={{ rotate: 360 }} // Rotates 360 degrees
-                                transition={{ duration: 2, repeat: Infinity, ease: "linear", }}
-                                className="flex items-center justify-center w-6 h-6"
-                              >
-                                <Settings className="h-4 w-4 text-yellow-500" />
-                              </motion.div>
-                              <span className="text-yellow-500">Match Ongoing</span>
-                            </>) : (
-                              <>
-                                <CheckCheck className="h-4 w-4 text-green-500" />
-                                <span className="text-green-500">Match Completed</span>
-                              </>)}
-                          </>)}
-                    </div>
-                  }
+                  <MatchStatus status={localMatch.status} Time={localMatch.time} />
                 </div>
                 <Progress
                   value={progress}
@@ -263,15 +196,7 @@ const MatchCard = ({ match }) => {
 
             {/* Date & Time */}
             <div className="flex items-start justify-between gap-2 text-sm">
-              <div className="flex items-center gap-1 justify-center">
-                <Timer className="h-5 w-5 text-muted-foreground" />
-                <SlidingNumber value={timeLeft ? timeLeft.hours : 0} />
-                <span>hrs</span>
-                <SlidingNumber value={timeLeft ? timeLeft.minutes : 0} />
-                <span>Min</span>
-                <SlidingNumber value={timeLeft ? timeLeft.seconds : 0} />
-                <span>Sec</span>
-              </div>
+              <MatchStatus status={localMatch.status} Time={localMatch.time} />
               <div className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4 text-muted-foreground" />

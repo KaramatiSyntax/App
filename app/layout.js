@@ -69,8 +69,8 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#095e6c' },
-    { media: '(prefers-color-scheme: dark)', color: '#077385' },
+    { media: '(prefers-color-scheme: light)', color: 'oklch(0.145 0 0)' },
+    { media: '(prefers-color-scheme: dark)', color: 'oklch(0.145 0 0)' },
   ],
 };
 
@@ -100,7 +100,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
           
 
-            <div className="w-[20vmin] h-[20vmin] rounded-full bg-[var(--atoll-dark)] dark:bg-[var(--scooter)] absolute left-10 top-10 -z-10 blur-[5rem]" />
+            <div className="w-[20vmin] h-[20vmin] rounded-full bg-[var(--atoll-dark)] dark:bg-[var(--scooter)] absolute left-10 top-40 -z-10 blur-[5rem]" />
             <div className="w-[20vmin] h-[20vmin] rounded-full bg-[var(--atoll)] dark:bg-[var(--eastern-blue)] absolute right-10 bottom-10 -z-10 blur-[5rem]" />
             <AlertProvider>
               <OfflineScreen />

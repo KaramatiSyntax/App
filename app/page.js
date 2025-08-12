@@ -168,7 +168,7 @@ export default function Home() {
 
         <div
           style={{
-            width: `${title.length * 10}px`,
+            width: `${title.trim().length - 6}rem`,
           }}
           className="mt-0.5 mb-6 h-[0.5px] bg-gradient-to-l 
              from-cyan-400 via-teal-400 to-blue-500 opacity-80"
