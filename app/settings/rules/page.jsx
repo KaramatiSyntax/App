@@ -1,10 +1,10 @@
 import React from "react";
 
 export const metadata = {
-  title: "Rules | Turrani Esports",
-  description: "Official rules and guidelines for participating in Turrani Esports tournaments and matches.",
+  title: "Rules | TurraniX",
+  description: "Official rules and guidelines for participating in TurraniX tournaments and matches.",
   keywords: [
-    "Turrani Esports rules",
+    "TurraniX rules",
     "tournament rules",
     "esports guidelines",
     "fair play",
@@ -13,16 +13,16 @@ export const metadata = {
     "match participation"
   ],
   openGraph: {
-    title: "Rules | Turrani Esports",
-    description: "Official rules and guidelines for participating in Turrani Esports tournaments and matches.",
+    title: "Rules | TurraniX",
+    description: "Official rules and guidelines for participating in TurraniX tournaments and matches.",
     url: "https://turrani-esports.vercel.app/settings/rules",
-    siteName: "Turrani Esports",
+    siteName: "TurraniX",
     images: [
       {
                   url: "https://turrani-esports.vercel.app/logo.png",
         width: 512,
         height: 512,
-        alt: "Turrani Esports Logo"
+        alt: "TurraniX Logo"
       }
     ],
     locale: "en_IN",
@@ -30,8 +30,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rules | Turrani Esports",
-    description: "Official rules and guidelines for participating in Turrani Esports tournaments and matches.",
+    title: "Rules | TurraniX",
+    description: "Official rules and guidelines for participating in TurraniX tournaments and matches.",
     site: "@turrani_esports",
     images: ["https://turrani-esports.vercel.app/logo.png"]
   },

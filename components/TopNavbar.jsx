@@ -133,7 +133,7 @@ export default function TopNavbar() {
                     <Image
                       className="relative z-10 transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]"
                       src="/icon.png"
-                      alt="Turrani Esports"
+                      alt="TurraniX"
                       width={40}
                       height={40}
                       priority
@@ -149,21 +149,11 @@ export default function TopNavbar() {
                     <TextEffect
                       per='char'
                       preset='fade-in-blur'
-                      className="text-lg font-bold"
+                      className="text-lg font-bold  text-cyan-500"
                       speedReveal={0.8}
                       speedSegment={1.2}
                     >
-                      TURRANI
-                    </TextEffect>
-                    <TextEffect
-                      per='char'
-                      preset='fade-in-blur'
-                      className="text-lg font-bold text-cyan-500"
-                      speedReveal={0.8}
-                      speedSegment={1.2}
-                      delay={0.8}
-                    >
-                      ESPORTS
+                      TurraniX
                     </TextEffect>
                   </motion.div>
                 </div>

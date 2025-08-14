@@ -9,7 +9,7 @@ import Image from "next/image";
 
 const slides = [
 	{
-		title: "Welcome to Turrani Esports!",
+		title: "Welcome to TurraniX!",
 		image: "https://iili.io/FLyNvVf.jpg",
 	},
 	{

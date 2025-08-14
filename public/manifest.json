@@ -1,5 +1,5 @@
 {
-  "name": "Turrani Esports",
+  "name": "TurraniX",
   "short_name": "Turrani",
   "description": "Let give your talent a chance to win... It is a platform that provides you a chance to challenge yourself. Go ahead, make your own world — a gaming world!",
   "start_url": "/",
@@ -104,7 +104,7 @@
       "sizes": "1280x720",
       "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "Turrani Esports Homepage"
+      "label": "TurraniX Homepage"
     },
     {
       "src": "/2.jpg",

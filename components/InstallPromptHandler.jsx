@@ -199,7 +199,7 @@ export default function InstallPromptHandler() {
       instructions = 'Look for the install icon in your browser\'s address bar or menu';
     }
 
-    alert(`To install Turrani Esports:\n\n${instructions}`);
+    alert(`To install TurraniX:\n\n${instructions}`);
     setShowInstallPrompt(false);
   };
 
@@ -234,14 +234,14 @@ export default function InstallPromptHandler() {
               <div className="mx-auto mb-4">
                 <img 
                   src="/icon.png" 
-                  alt="Turrani Esports" 
+                  alt="TurraniX" 
                   className="w-20 h-20 rounded-2xl shadow-lg mx-auto"
                 />
               </div>
 
               {/* Title */}
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Install Turrani Esports
+                Install TurraniX
               </h2>
 
               {/* Description */}
@@ -311,7 +311,7 @@ export default function InstallPromptHandler() {
             <div className="ml-3 flex-1">
               <h3 className="font-semibold">App Installed Successfully!</h3>
               <p className="text-sm opacity-90 mt-1">
-                Turrani Esports has been added to your home screen. You can now access it like a native app!
+                TurraniX has been added to your home screen. You can now access it like a native app!
               </p>
             </div>
             <button

@@ -49,13 +49,13 @@ const playpen = Playpen_Sans({
 });
 
 export const metadata = {
-  title: 'TURRANI ESPORTS',
+  title: 'TurraniX',
   description: 'Let give your talent a chance to win... It is a platform that provides you a chance to challenge yourself. Go ahead, make your own world — a gaming world!',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Turrani Esports',
+    title: 'TurraniX',
   },
   icons: {
     icon: '/logo.png',

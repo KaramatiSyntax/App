@@ -78,7 +78,7 @@ export async function POST(req) {
     try {
       await NotificationService.sendCustomNotification(
         user.email,
-        'Welcome to Turrani Esports! 🎮',
+        'Welcome to TurraniX! 🎮',
         `Account created successfully! Welcome ${user.firstName || user.username}!`
       );
     } catch (notificationError) {

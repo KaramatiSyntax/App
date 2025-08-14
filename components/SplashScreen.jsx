@@ -78,14 +78,14 @@ export default function SplashScreen({ showAnimatedText = false }) {
             />
             <Image
               src="/icon.png"
-              alt="Turrani Esports"
+              alt="TurraniX"
               fill
               className="object-contain relative z-10"
               priority
             />
           </motion.div>
 
-          {/* TURRANI ESPORTS - H6 size */}
+          {/* TurraniX - H6 size */}
           <motion.h6
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -96,10 +96,10 @@ export default function SplashScreen({ showAnimatedText = false }) {
             }}
             className="text-base font-bold mb-4 bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent"
           >
-            TURRANI ESPORTS
+            TurraniX
           </motion.h6>
 
-          {/* 3-dot beep animation - White, centered, just below TURRANI ESPORTS */}
+          {/* 3-dot beep animation - White, centered, just below TurraniX */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

@@ -230,7 +230,7 @@ export default function SettingsPage() {
           </div>
           <div>
             <h3 className="font-semibold text-white group-hover:text-pink-400 transition-colors">About Us</h3>
-            <p className="text-sm text-white/70 mt-1">Learn more about Turrani Esports</p>
+            <p className="text-sm text-white/70 mt-1">Learn more about TurraniX</p>
           </div>
         </Link>
         {/* Rules Card */}

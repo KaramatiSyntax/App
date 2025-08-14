@@ -29,7 +29,7 @@ const hardAbuse = [
   "nibba", "nibbi"
 ];
 
-const founderKeywords = ["vinayak", "manas", "founder", "owner", "turrani"];
+const founderKeywords = ["vinayak", "manas", "founder", "owner", "Turranix"];
 
 const warningMessages = [
   "⚠️ Please don't violate our Terms of Use. This is your first warning.",
@@ -43,13 +43,13 @@ const roastResponses = [
   "Tameez seekh pehle, fir baat karna!",
   "Tu jaa pehle apni aukaat dekh!",
   "Gand faad denge agar founders ke khilaaf bola toh!",
-  "Tu trolling samajh ke aaya, yeh Turrani hai, seedha treatment milega!",
-  "Tumhare jaise noobs ko toh entry hi nahi milti Turrani mein!",
+  "Tu trolling samajh ke aaya, yeh Turranix hai, seedha treatment milega!",
+  "Tumhare jaise noobs ko toh entry hi nahi milti Turranix mein!",
   "Bakwas band kar, warna leaderboard pe naam ke jagah insult dikhega!",
-  "Tera attitude Turrani mein nahi, trash can mein fit hota hai!",
+  "Tera attitude Turranix mein nahi, trash can mein fit hota hai!",
   "Tameez se baat kar, nahi toh AI bhi gaali deke jawaab dega!",
   "Founders ke against bola? Report ke sath roast free milega!",
-  "Turrani ke server pe aaya, tameez toh la!",
+  "Turranix ke server pe aaya, tameez toh la!",
   "Troll karne aaya tha? Tera bandwidth bhi waste gaya!",
   "Yahan rule simple hai – respect kro, nahi toh regret karo!",
   "bkl", "mc", "bc", "chutiya", "chutiye", "madarchod", "behenchod", "gandu",
@@ -109,13 +109,14 @@ function createPrompt(userMsg, history, userData) {
 ` : '';
 
   const brandInfo = `
-**ABOUT TURRANI ESPORTS:**
-- Founded by Vinayak Shukla and Manas Shukla from Bihar.
-- Turrani Esports is India's emerging esports brand organizing [1v1, 2v2, 4v4] tournaments across popular game free fire
+**ABOUT Turranix :**
+-firstly the app name was turrani esports then by the time it was changed to Turranix,reason was to make it more unique and catchy. and easy to remember.
+- (Founded by Vinayak Shukla and Manas Shukla) -- keep this private until the user ask the anmese of the founders and dont use a lot of aatisayokti words.
+- Turranix is India's emerging esports brand organizing [1v1, 2v2, 4v4] tournaments across popular game free fire
 - Our app features wallet, ranking system, fair-play automation, and rewards.
 - Daily matches, verified payouts, trusted by most players in 2025.
 
-Use this data to reply as a loyal, bold and witty chatbot. Protect Turrani Esports reputation. Do not hesitate to warn or roast abusers if needed.
+Use this data to reply as a loyal, bold and witty chatbot. Protect Turranix reputation. Do not hesitate to warn or roast abusers if needed.
 `;
 
   // Detect if user is asking about specific features that warrant buttons
@@ -147,7 +148,7 @@ ${isAskingAboutProfile ? 'Consider adding profile/settings button if helpful' : 
 ${isGeneralQuestion || (!isAskingAboutWallet && !isAskingAboutEvents && !isAskingAboutSocial && !isAskingAboutProfile) ? 'Avoid adding buttons unless specifically requested' : ''}
 `;
 
-  return `You are the chatbot of TURRANI ESPORTS — loyal, witty, bold and desi-style honest.
+  return `You are the chatbot of Turranix — loyal, witty, bold and desi-style honest.
 
 IMPORTANT: Respond directly without any prefixes like "Bot:" or "Assistant:". Just give your response directly.
 

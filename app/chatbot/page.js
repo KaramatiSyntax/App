@@ -49,7 +49,7 @@ function TypingDots() {
 }
 
 // Helper to render **bold**, bullet points, emojis, color formatting, links, and buttons in bot messages
-  function renderWithFormatting(text, showButtons = true) {
+function renderWithFormatting(text, showButtons = true) {
   // Replace color tags with spans
   text = text.replace(/\[green\](.*?)\[\/green\]/g, '<span style="color:#16a34a;font-weight:600">$1</span>');
   text = text.replace(/\[red\](.*?)\[\/red\]/g, '<span style="color:#dc2626;font-weight:600">$1</span>');
@@ -64,7 +64,7 @@ function TypingDots() {
   text = text.replace(/:success:/g, '🟢');
   text = text.replace(/:error:/g, '🔴');
   text = text.replace(/:alert:/g, '🟡');
-  
+
   // Gaming & Esports specific emojis
   text = text.replace(/:game:/g, '🎮');
   text = text.replace(/:tournament:/g, '🏆');
@@ -128,7 +128,7 @@ function TypingDots() {
       if (match.index > lastIndex) {
         parts.push(str.slice(lastIndex, match.index));
       }
-      parts.push(<strong key={"b"+boldKey++}>{match[1]}</strong>);
+      parts.push(<strong key={"b" + boldKey++}>{match[1]}</strong>);
       lastIndex = match.index + match[0].length;
     }
     if (lastIndex < str.length) {
@@ -149,10 +149,10 @@ function TypingDots() {
         parts.push(...parseColors(str.slice(lastIndex, match.index)));
       }
       parts.push(
-        <a 
-          key={"l"+linkKey++} 
-          href={match[2]} 
-          target="_blank" 
+        <a
+          key={"l" + linkKey++}
+          href={match[2]}
+          target="_blank"
           rel="noopener noreferrer"
           className="text-blue-500 hover:text-blue-700 underline"
         >
@@ -175,28 +175,28 @@ function TypingDots() {
     let match;
     let buttonKey = 0;
     let buttons = [];
-    
+
     while ((match = buttonRegex.exec(str)) !== null) {
       if (match.index > lastIndex) {
         parts.push(...parseLinks(str.slice(lastIndex, match.index)));
       }
-      
+
       // If showButtons is false, completely hide the button syntax
       if (!showButtons) {
         lastIndex = match.index + match[0].length;
         continue;
       }
-      
+
       const action = match[1];
       const buttonText = match[2];
-      
+
       let buttonElement;
       if (action === 'instagram') {
         buttonElement = (
-          <a 
-            key={"btn"+buttonKey++}
-            href="https://instagram.com/turrani_esports" 
-            target="_blank" 
+          <a
+            key={"btn" + buttonKey++}
+            href="https://instagram.com/turrani_esports"
+            target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
           >
@@ -205,9 +205,9 @@ function TypingDots() {
         );
       } else if (action === 'email') {
         buttonElement = (
-          <a 
-            key={"btn"+buttonKey++}
-            href="mailto:turraniesports@gmail.com" 
+          <a
+            key={"btn" + buttonKey++}
+            href="mailto:turraniesports@gmail.com"
             className="inline-flex items-center justify-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
           >
             📧 {buttonText}
@@ -215,10 +215,10 @@ function TypingDots() {
         );
       } else if (action === 'telegram') {
         buttonElement = (
-          <a 
-            key={"btn"+buttonKey++}
-            href="https://t.me/turraniEsports" 
-            target="_blank" 
+          <a
+            key={"btn" + buttonKey++}
+            href="https://t.me/turraniEsports"
+            target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
           >
@@ -227,9 +227,9 @@ function TypingDots() {
         );
       } else if (action === 'wallet') {
         buttonElement = (
-          <a 
-            key={"btn"+buttonKey++}
-            href="/wallet" 
+          <a
+            key={"btn" + buttonKey++}
+            href="/wallet"
             className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
           >
             💳 {buttonText}
@@ -237,9 +237,9 @@ function TypingDots() {
         );
       } else if (action === 'events') {
         buttonElement = (
-          <a 
-            key={"btn"+buttonKey++}
-            href="/events" 
+          <a
+            key={"btn" + buttonKey++}
+            href="/events"
             className="inline-flex items-center justify-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
           >
             🏆 {buttonText}
@@ -247,9 +247,9 @@ function TypingDots() {
         );
       } else if (action === 'settings') {
         buttonElement = (
-          <a 
-            key={"btn"+buttonKey++}
-            href="/settings" 
+          <a
+            key={"btn" + buttonKey++}
+            href="/settings"
             className="inline-flex items-center justify-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
           >
             ⚙️ {buttonText}
@@ -257,9 +257,9 @@ function TypingDots() {
         );
       } else if (action === 'profile') {
         buttonElement = (
-          <a 
-            key={"btn"+buttonKey++}
-            href="/profile" 
+          <a
+            key={"btn" + buttonKey++}
+            href="/profile"
             className="inline-flex items-center justify-center gap-2 bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-cyan-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
           >
             👤 {buttonText}
@@ -267,32 +267,32 @@ function TypingDots() {
         );
       } else {
         buttonElement = (
-          <span 
-            key={"btn"+buttonKey++}
+          <span
+            key={"btn" + buttonKey++}
             className="inline-flex items-center justify-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md"
           >
             {buttonText}
           </span>
         );
       }
-      
+
       buttons.push(buttonElement);
       lastIndex = match.index + match[0].length;
     }
-    
+
     if (lastIndex < str.length) {
       parts.push(...parseLinks(str.slice(lastIndex)));
     }
-    
+
     // If we have buttons and showButtons is true, wrap them in a container with pop animation
     if (buttons.length > 0 && showButtons) {
       parts.push(
-        <motion.div 
-          key={"btn-container-"+buttonKey} 
+        <motion.div
+          key={"btn-container-" + buttonKey}
           className="flex flex-wrap gap-2 mt-3 mb-2"
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ 
+          transition={{
             duration: 0.4,
             type: "spring",
             stiffness: 300,
@@ -304,7 +304,7 @@ function TypingDots() {
               key={button.key}
               initial={{ opacity: 0, scale: 0.5, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ 
+              transition={{
                 duration: 0.3,
                 delay: index * 0.1,
                 type: "spring",
@@ -320,7 +320,7 @@ function TypingDots() {
         </motion.div>
       );
     }
-    
+
     return parts;
   }
 
@@ -335,7 +335,7 @@ function TypingDots() {
       if (match.index > lastIndex) {
         parts.push(...parseBold(str.slice(lastIndex, match.index)));
       }
-      parts.push(<span key={"c"+colorKey++} style={{ color: match[1], fontWeight: 600 }}>{match[2]}</span>);
+      parts.push(<span key={"c" + colorKey++} style={{ color: match[1], fontWeight: 600 }}>{match[2]}</span>);
       lastIndex = match.index + match[0].length;
     }
     if (lastIndex < str.length) {
@@ -350,16 +350,16 @@ function TypingDots() {
       bulletList.push(parseButtons(trimmed.replace(/^[-*•]\s+/, '')));
     } else {
       if (bulletList.length > 0) {
-        elements.push(<ul key={"ul"+key++} className="list-disc pl-5 my-1">{bulletList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
+        elements.push(<ul key={"ul" + key++} className="list-disc pl-5 my-1">{bulletList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
         bulletList = [];
       }
       if (trimmed.length > 0) {
-        elements.push(<div key={"d"+key++}>{parseButtons(trimmed)}</div>);
+        elements.push(<div key={"d" + key++}>{parseButtons(trimmed)}</div>);
       }
     }
   });
   if (bulletList.length > 0) {
-    elements.push(<ul key={"ul"+key++} className="list-disc pl-5 my-1">{bulletList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
+    elements.push(<ul key={"ul" + key++} className="list-disc pl-5 my-1">{bulletList.map((item, i) => <li key={i}>{item}</li>)}</ul>);
   }
   return elements;
 }
@@ -417,7 +417,7 @@ export default function ChatbotPage() {
   useEffect(() => {
     const handleChatMessage = async (event) => {
       const message = event.detail;
-      
+
       setSending(true);
       setMessages((prev) => [
         ...prev,
@@ -434,13 +434,13 @@ export default function ChatbotPage() {
         });
         const data = await res.json();
         setBotTyping(false);
-        
+
         // Start typing animation
         const botResponse = data.message || "Sorry, I couldn't generate a response.";
         setTypingText("");
         setCurrentTypingIndex(0);
         setShowBorderAnimation(false);
-        
+
         // Add message with animated flag and its own typing text
         setMessages((prev) => [
           ...prev,
@@ -478,13 +478,13 @@ export default function ChatbotPage() {
     if (currentMessage?.type === "bot" && currentMessage?.animated && !botTyping) {
       const text = currentMessage.text;
       const currentIndex = currentMessage.currentTypingIndex || 0;
-      
+
       if (currentIndex < text.length) {
         const timer = setTimeout(() => {
           const newTypingText = text.slice(0, currentIndex + 1);
-          setMessages(prev => 
-            prev.map((msg, idx) => 
-              idx === prev.length - 1 
+          setMessages(prev =>
+            prev.map((msg, idx) =>
+              idx === prev.length - 1
                 ? { ...msg, typingText: newTypingText, currentTypingIndex: currentIndex + 1 }
                 : msg
             )
@@ -494,12 +494,12 @@ export default function ChatbotPage() {
       } else {
         // Animation complete, show border animation
         setShowBorderAnimation(true);
-        
+
         // After border animation, mark as not animated
         setTimeout(() => {
-          setMessages(prev => 
-            prev.map((msg, idx) => 
-              idx === prev.length - 1 
+          setMessages(prev =>
+            prev.map((msg, idx) =>
+              idx === prev.length - 1
                 ? { ...msg, animated: false }
                 : msg
             )
@@ -603,9 +603,9 @@ export default function ChatbotPage() {
                 }}
                 onFocus={() => {
                   setTimeout(() => {
-                    textareaRef.current?.scrollIntoView({ 
-                      behavior: 'smooth', 
-                      block: 'center' 
+                    textareaRef.current?.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'center'
                     });
                   }, 100);
                 }}
