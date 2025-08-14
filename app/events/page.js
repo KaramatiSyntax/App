@@ -4,18 +4,10 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import EventTimer from "@/components/eventTimer";
-import { IndianRupee, Trophy, Users, Sword } from "lucide-react";
+import { GlowEffect } from "@/components/motion-primitives/glow-effect";
+import {Calendar, IndianRupee, Trophy, Gamepad, Users, ShieldCheck} from "lucide-react";
 
 export default function EventPage() {
-  useEffect(() => {
-    // Disable scroll while on this page
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, []);
 
   const animationVariants = {
     hidden: { x: -100, opacity: 0 },
@@ -46,7 +38,7 @@ export default function EventPage() {
 
         {/* Timer */}
         <div className="w-full max-w-3xl px-6 absolute bottom-0">
-          <EventTimer eventTime="2025-08-15T08:00:00" />
+          <EventTimer eventTime="2025-08-15T13:00:00" />
         </div>
 
         <motion.div
@@ -96,43 +88,82 @@ export default function EventPage() {
         </div>
       </motion.div>
 
-      {/* Event Info Cards */}
-      <motion.div
-        className="flex flex-wrap justify-center gap-6 mb-14 px-4"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-      >
-        <div className="flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-lg max-w-xs">
-          <Trophy className="text-yellow-400 w-8 h-8 mb-2" />
-          <h3 className="text-lg font-semibold text-white">Prize Pool</h3>
-          <p className="text-white/80 text-sm flex items-center gap-1">
-            <IndianRupee className="w-4 h-4" />
-            50,000
-          </p>
-        </div>
-
-        <div className="flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-lg max-w-xs">
-          <Users className="text-blue-400 w-8 h-8 mb-2" />
-          <h3 className="text-lg font-semibold text-white">Teams</h3>
-          <p className="text-white/80 text-sm">16 Teams</p>
-        </div>
-
-        <div className="flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-lg max-w-xs">
-          <Sword className="text-red-400 w-8 h-8 mb-2" />
-          <h3 className="text-lg font-semibold text-white">Format</h3>
-          <p className="text-white/80 text-sm">Best of 5 Matches</p>
-        </div>
-      </motion.div>
 
       {/* Register Button */}
-      <motion.button
-        className="px-10 py-3 rounded-full bg-gradient-to-r from-orange-500 via-white to-green-500 text-black font-semibold text-lg shadow-lg hover:scale-105 transition-transform mb-12"
-        whileTap={{ scale: 0.95 }}
-        aria-label="Register for Independence Day Free Fire Showdown"
+      <motion.div
+        className="flex items-center justify-center mb-16 relative"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
       >
-        Register Now
-      </motion.button>
+        <GlowEffect
+          colors={["#FF6F00", "#FFFFFF", "#138808"]}
+          mode='flowHorizontal'
+          blur='soft'
+        />
+        <button className='relative inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-white outline-1 bg-zinc-700/5 outline-white'>
+          Join the battle
+        </button>
+      </motion.div>
+
+      {/* Event Details */}
+      <div className="w-full max-w-3xl px-6 mb-10">
+
+        {/* Heading with separator */}
+        <h2 className="text-2xl font-bold text-white mb-3 flex items-center gap-3">
+          Details
+          <span className="flex-1 h-px bg-white/20"></span>
+        </h2>
+
+        {/* Details List */}
+        <ul className="list-none text-white/80 text-sm sm:text-base space-y-2">
+          <li className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-yellow-300" />
+            <span>Date & Time:</span>
+            <span className="text-white font-medium">15 Aug 2025, 1:00 PM</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <IndianRupee className="w-5 h-5 text-orange-400" />
+            <span>Entry Fee:</span>
+            <span className="text-white font-medium">₹10</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-green-400" />
+            <span>Prize Pool:</span>
+            <span className="text-white font-medium">70% of total collection</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <Gamepad className="w-5 h-5 text-purple-400" />
+            <span>Format:</span>
+            <span className="text-white font-medium">B.R</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-cyan-400" />
+            <span>Match Type:</span>
+            <span className="text-white font-medium">Squad</span>
+          </li>
+
+          {/* Rules */}
+          <li className="mt-4 text-orange-400 font-semibold flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5" />
+            Rules:
+          </li>
+          <li className="pl-7">• No hacks, cheats, or third-party tools allowed</li>
+          <li className="pl-7">• Respect teammates and opponents</li>
+          <li className="pl-7">• Ping issues will not pause matches</li>
+          <li className="pl-7">• Follow match host instructions at all times</li>
+          <li className="pl-7">• Disconnection mid-game means the match continues</li>
+        </ul>
+      </div>
+      {/* Footer */}
+      <div className="w-full max-w-3xl px-6 text-center text-white/60 text-xs sm:text-sm mb-8">
+        <p>
+          By participating, you agree to our{" "}
+          <a href="/terms" className="text-blue-400 hover:underline">
+            Terms & Conditions
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
