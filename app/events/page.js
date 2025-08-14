@@ -18,12 +18,12 @@ export default function EventPage() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-black flex flex-col items-center">
+    <div className="min-h-screen w-full pt-16 bg-black flex flex-col items-center relative">
       
       {/* Hero Image - no border radius */}
-      <div className="relative w-full pt-16 max-w-6xl h-64 sm:h-80 md:h-96">
+      <div className="absolute top-0 left-0 w-full pt-16 max-w-6xl aspect-video">
         <Image
-          src="/eventHero.jpg" // Replace with your hero image path
+          src="/eventHero.jpg"
           alt="Independence Day Free Fire Event Hero"
           fill
           className="object-cover object-center"
@@ -32,7 +32,7 @@ export default function EventPage() {
       </div>
 
       {/* Separator with black shadow blur blending image with bg */}
-      <div className="w-full h-32 max -mt-16 bg-gradient-to-t from-black to-transparent"></div>
+      <div className="absolute top-0 left-0 w-full aspect-video max-w-6xl bg-gradient-to-t from-black to-transparent"></div>
 
       {/* Title below separator */}
       <motion.h1
