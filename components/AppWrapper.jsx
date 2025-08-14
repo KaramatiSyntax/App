@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useAppLoading } from '@/lib/hooks/useAppLoading'
 import SplashScreen from '@/components/SplashScreen'
 import TopNavbar from '@/components/TopNavbar'
-import MagicalBgLayout from "@/components/MagicalBgLayout"
 import Navbar from '@/components/navbar'
 import { usePathname } from 'next/navigation';
 
@@ -20,6 +19,9 @@ export default function AppWrapper({ children }) {
   
   // Check if user is on login/signup page
   const isOnAuthPage = pathname === '/login';
+
+  // Check if user is on the event page
+  const isPaddingRequired = pathname !== '/events';
   
   useEffect(() => {
     // Check for q=install parameter
@@ -52,12 +54,10 @@ export default function AppWrapper({ children }) {
         </div>
       )}
       <TopNavbar />
-      <MagicalBgLayout>
-        <main className="pt-16">
+        <main className={isPaddingRequired ? "pt-16" : "pt-0"}>
           {children}
         </main>
-      </MagicalBgLayout>
       <Navbar />
     </>
   );
-} 
+}  

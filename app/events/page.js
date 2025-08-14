@@ -1,108 +1,116 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Clock, Sparkles, Zap } from "lucide-react";
-import { useRouter } from "next/navigation";
+import EventTimer from "@/components/eventTimer";
+import { IndianRupee, Trophy, Users, Sword } from "lucide-react";
 
-// Theme-aware background
-const bgGradient =
-  " min-h-screen w-full fixed top-0 left-0 -z-10";
-
-function ShineCard({ children, delay = 0 }) {
-  return (
-    <motion.div
-      className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-white/10 backdrop-blur-xl group w-full max-w-md mx-auto mb-8"
-      whileHover={{ scale: 1.04 }}
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -40 }}
-      transition={{ duration: 0.6, delay }}
-    >
-      {/* Rotating shine effect */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(120deg, rgba(59, 130, 246, 0.13) 0%, rgba(147, 51, 234, 0.05) 100%)",
-          opacity: 0.6,
-        }}
-        animate={{ rotate: 360 }}
-        initial={{ rotate: 0 }}
-        transition={{
-          repeat: Infinity,
-          duration: 12,
-          ease: "linear",
-          delay,
-        }}
-      />
-      <div className="relative z-10 p-6 flex flex-col gap-3">{children}</div>
-    </motion.div>
-  );
-}
-
-export default function EventsPage() {
-  const [bgGradient] = useState("absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900");
-
+export default function EventPage() {
   useEffect(() => {
-    // Remove scroll bars
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-
+    // Disable scroll while on this page
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     return () => {
-      // Restore scroll bars on unmount
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-4rem-70px-2rem)] flex items-center justify-center py-8 px-4 overflow-hidden">
-      {/* Theme-aware background */}
-      <div className={bgGradient} />
+    <div className="min-h-screen w-full bg-black flex flex-col items-center">
       
-      <div className="w-full max-w-sm sm:max-w-md mx-auto">
-        <ShineCard delay={0.2}>
-          <div className="text-center px-4 sm:px-6">
-            <motion.div
-              className="flex justify-center mb-4"
-              animate={{ rotate: 360 }}
-              transition={{
-                repeat: Infinity,
-                duration: 3,
-                ease: "linear",
-              }}
-            >
-              <Sparkles className="w-8 h-8 sm:w-12 sm:h-12 text-blue-400" />
-            </motion.div>
-            
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 drop-shadow">
-              Feature Coming Soon
-            </h1>
-            
-            <div className="flex items-center justify-center gap-2 text-base sm:text-lg text-white/70 mb-4">
-              <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-              <span className="font-semibold">Stay Tuned!</span>
-            </div>
-            
-            <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6 px-2">
-              We're working hard to bring you an amazing events experience. 
-              Get ready for tournaments, competitions, and exciting gaming events!
-            </p>
-
-            {/* Cracker Button */}
-            <motion.button
-              className="relative px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Coming Soon!</span>
-                </div>
-            </motion.button>
-          </div>
-        </ShineCard>
+      {/* Hero Image - no border radius */}
+      <div className="relative w-full pt-16 max-w-6xl h-64 sm:h-80 md:h-96">
+        <Image
+          src="/eventHero.jpg" // Replace with your hero image path
+          alt="Independence Day Free Fire Event Hero"
+          fill
+          className="object-cover object-center"
+          priority
+        />
       </div>
+
+      {/* Separator with black shadow blur blending image with bg */}
+      <div className="w-full h-32 max -mt-16 bg-gradient-to-t from-black to-transparent"></div>
+
+      {/* Title below separator */}
+      <motion.h1
+        className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold text-white drop-shadow-lg mt-8 mb-6 max-w-3xl px-4 leading-tight"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        Independence Day Free Fire Showdown
+      </motion.h1>
+
+      {/* Timer */}
+      <div className="w-full max-w-3xl px-6 mb-10">
+        <EventTimer eventTime="2025-08-15T08:00:00" />
+      </div>
+
+      {/* Tagline */}
+      <p className="text-white/80 text-base sm:text-lg mb-10 max-w-xl text-center leading-relaxed px-4">
+        Join the ultimate{" "}
+        <span className="text-orange-400 font-semibold">Orange</span>,{" "}
+        <span className="text-white font-semibold">White</span> &{" "}
+        <span className="text-green-400 font-semibold">Green</span> squad battle this 15th August. 
+        Clash for glory, pride, and ultimate victory!
+      </p>
+
+      {/* VS Teams */}
+      <motion.div
+        className="flex items-center justify-center gap-4 sm:gap-8 mb-12"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <div className="text-orange-400 text-2xl sm:text-3xl font-bold">Orange</div>
+        <Sword className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+        <div className="text-white text-2xl sm:text-3xl font-bold">White</div>
+        <Sword className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+        <div className="text-green-400 text-2xl sm:text-3xl font-bold">Green</div>
+      </motion.div>
+
+      {/* Event Info Cards */}
+      <motion.div
+        className="flex flex-wrap justify-center gap-6 mb-14 px-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
+        {/* Entry Fee */}
+        <div className="flex flex-col items-center bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-white/20 min-w-[90px]">
+          <IndianRupee className="h-6 w-6 text-orange-400 mb-1" />
+          <span className="text-xs text-white/70">Entry Fee</span>
+          <span className="text-lg font-bold text-white">₹10</span>
+        </div>
+        {/* Prize Pool */}
+        <div className="flex flex-col items-center bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-white/20 min-w-[90px]">
+          <Trophy className="h-6 w-6 text-yellow-300 mb-1" />
+          <span className="text-xs text-white/70">Prize Pool</span>
+          <span className="text-lg font-bold text-white">70%</span>
+        </div>
+        {/* Teams */}
+        <div className="flex flex-col items-center bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-white/20 min-w-[90px]">
+          <Users className="h-6 w-6 text-green-400 mb-1" />
+          <span className="text-xs text-white/70">Teams</span>
+          <span className="text-lg font-bold">
+            <span className="text-orange-400">O</span> /{" "}
+            <span className="text-white">W</span> /{" "}
+            <span className="text-green-400">G</span>
+          </span>
+        </div>
+      </motion.div>
+
+      {/* Register Button */}
+      <motion.button
+        className="px-10 py-3 rounded-full bg-gradient-to-r from-orange-500 via-white to-green-500 text-black font-semibold text-lg shadow-lg hover:scale-105 transition-transform mb-12"
+        whileTap={{ scale: 0.95 }}
+        aria-label="Register for Independence Day Free Fire Showdown"
+      >
+        Register Now
+      </motion.button>
     </div>
   );
-} 
+}

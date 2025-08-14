@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { format, isToday, isYesterday, isTomorrow } from 'date-fns';
-import { Calendar, Users, Trophy, Coins, IndianRupee, Clock, Clipboard, Check, Timer } from "lucide-react";
+import { Calendar, Users, Trophy, Coins, IndianRupee, Clock, Clipboard, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
