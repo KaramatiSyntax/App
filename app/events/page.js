@@ -17,36 +17,51 @@ export default function EventPage() {
     };
   }, []);
 
+  const animationVariants = {
+    hidden: { x: -100, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100, damping: 20, duration: 0.8 },
+    },
+  };
+
   return (
-    <div className="min-h-screen w-full pt-16 bg-black flex flex-col items-center relative">
-      
-      {/* Hero Image - no border radius */}
-      <div className="absolute top-0 left-0 w-full pt-16 max-w-6xl aspect-video">
-        <Image
-          src="/eventHero.jpg"
-          alt="Independence Day Free Fire Event Hero"
-          fill
-          className="object-cover object-center"
-          priority
-        />
-      </div>
+    <div className="w-full flex flex-col items-center">
 
-      {/* Separator with black shadow blur blending image with bg */}
-      <div className="absolute top-0 left-0 w-full aspect-video max-w-6xl bg-gradient-to-t from-black to-transparent"></div>
+      <div className="hero mt-16 w-full relative aspect-video">
+        {/* Hero Image - no border radius */}
+        <div className="absolute top-0 left-0 w-full h-full">
+          <Image
+            src="/eventHero.jpg"
+            alt="Independence Day Free Fire Event Hero"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+        </div>
 
-      {/* Title below separator */}
-      <motion.h1
-        className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold text-white drop-shadow-lg mt-8 mb-6 max-w-3xl px-4 leading-tight"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        Independence Day Free Fire Showdown
-      </motion.h1>
+        {/* Separator with black shadow blur blending image with bg */}
+        <div className="absolute top-0 left-0 w-full aspect-video max-w-6xl bg-gradient-to-t from-black to-transparent"></div>
 
-      {/* Timer */}
-      <div className="w-full max-w-3xl px-6 mb-10">
-        <EventTimer eventTime="2025-08-15T08:00:00" />
+        {/* Timer */}
+        <div className="w-full max-w-3xl px-6 absolute bottom-0">
+          <EventTimer eventTime="2025-08-15T08:00:00" />
+        </div>
+
+        <motion.div
+          className="absolute w-[30%] aspect-square bottom-16 left-0 z-10"
+          initial="hidden"
+          animate="visible"
+          variants={animationVariants}
+        >
+          <Image
+            src="/eventSticker.png"
+            alt="Independence Day Sticker"
+            fill
+            priority
+          />
+        </motion.div>
       </div>
 
       {/* Tagline */}
@@ -54,7 +69,7 @@ export default function EventPage() {
         Join the ultimate{" "}
         <span className="text-orange-400 font-semibold">Orange</span>,{" "}
         <span className="text-white font-semibold">White</span> &{" "}
-        <span className="text-green-400 font-semibold">Green</span> squad battle this 15th August. 
+        <span className="text-green-400 font-semibold">Green</span> squad battle this 15th August.
         Clash for glory, pride, and ultimate victory!
       </p>
 
@@ -65,11 +80,20 @@ export default function EventPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.5 }}
       >
-        <div className="text-orange-400 text-2xl sm:text-3xl font-bold">Orange</div>
-        <Sword className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-        <div className="text-white text-2xl sm:text-3xl font-bold">White</div>
-        <Sword className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-        <div className="text-green-400 text-2xl sm:text-3xl font-bold">Green</div>
+        <div className="flex flex-col items-center justify-center">
+          <span className="text-blue-400 text-xs">Team</span>
+          <span className="text-orange-400 text-xl sm:text-2xl font-bold">Orange</span>
+        </div>
+        <span className="w-6 h-6 sm:w-8 sm:h-8 text-red-500 font-bold">Vs</span>
+        <div className="flex flex-col items-center justify-center">
+          <span className="text-blue-400 text-xs">Team</span>
+          <span className="text-white text-xl sm:text-2xl font-bold">White</span>
+        </div>
+        <span className="w-6 h-6 sm:w-8 sm:h-8 text-red-500 font-bold">Vs</span>
+        <div className="flex flex-col items-center justify-center">
+          <span className="text-blue-400 text-xs">Team</span>
+          <span className="text-green-400 text-xl sm:text-2xl font-bold">Green</span>
+        </div>
       </motion.div>
 
       {/* Event Info Cards */}
@@ -79,27 +103,25 @@ export default function EventPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.5 }}
       >
-        {/* Entry Fee */}
-        <div className="flex flex-col items-center bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-white/20 min-w-[90px]">
-          <IndianRupee className="h-6 w-6 text-orange-400 mb-1" />
-          <span className="text-xs text-white/70">Entry Fee</span>
-          <span className="text-lg font-bold text-white">₹10</span>
+        <div className="flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-lg max-w-xs">
+          <Trophy className="text-yellow-400 w-8 h-8 mb-2" />
+          <h3 className="text-lg font-semibold text-white">Prize Pool</h3>
+          <p className="text-white/80 text-sm flex items-center gap-1">
+            <IndianRupee className="w-4 h-4" />
+            50,000
+          </p>
         </div>
-        {/* Prize Pool */}
-        <div className="flex flex-col items-center bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-white/20 min-w-[90px]">
-          <Trophy className="h-6 w-6 text-yellow-300 mb-1" />
-          <span className="text-xs text-white/70">Prize Pool</span>
-          <span className="text-lg font-bold text-white">70%</span>
+
+        <div className="flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-lg max-w-xs">
+          <Users className="text-blue-400 w-8 h-8 mb-2" />
+          <h3 className="text-lg font-semibold text-white">Teams</h3>
+          <p className="text-white/80 text-sm">16 Teams</p>
         </div>
-        {/* Teams */}
-        <div className="flex flex-col items-center bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-white/20 min-w-[90px]">
-          <Users className="h-6 w-6 text-green-400 mb-1" />
-          <span className="text-xs text-white/70">Teams</span>
-          <span className="text-lg font-bold">
-            <span className="text-orange-400">O</span> /{" "}
-            <span className="text-white">W</span> /{" "}
-            <span className="text-green-400">G</span>
-          </span>
+
+        <div className="flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-lg p-6 shadow-lg max-w-xs">
+          <Sword className="text-red-400 w-8 h-8 mb-2" />
+          <h3 className="text-lg font-semibold text-white">Format</h3>
+          <p className="text-white/80 text-sm">Best of 5 Matches</p>
         </div>
       </motion.div>
 
