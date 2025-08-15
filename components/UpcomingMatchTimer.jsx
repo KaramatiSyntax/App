@@ -39,7 +39,7 @@ function UpcomingMatchTimer({ Time }) {
     return () => clearInterval(timer);
   }, [Time]);
 
-  
+
 
   return (
     <>
@@ -48,8 +48,9 @@ function UpcomingMatchTimer({ Time }) {
         <>
           {timeLeft.hours > 0 && (
             <span className="flex items-center">
-              <SlidingNumber value={timeLeft.hours} />
-              <span>hrs</span>
+              <SlidingNumber
+                value={timeLeft.hours > 24 ? Math.round(timeLeft.hours / 24) : timeLeft.hours} />
+              <span>{timeLeft.hours > 24 ? 'day' : 'hrs'}</span>
             </span>
           )}
           <span className="flex items-center">
