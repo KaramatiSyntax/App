@@ -83,7 +83,7 @@ const MatchCard = ({ match }) => {
       (userData.username && p.username === userData.username) ||
       (userData.emailAddresses && p.email === userData.emailAddresses[0]?.emailAddress)
   );
-
+  
   return (
     <>
       {/* Card */}

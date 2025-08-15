@@ -136,6 +136,7 @@ export default function Home() {
       };
     }, [api, matches.length]);
 
+
     return (
       <motion.div
         key={key}
@@ -197,18 +198,20 @@ export default function Home() {
           <Carousel setApi={setApi} className="w-full relative">
             <CarouselContent>
               {matches.map((match, index) => (
-                <CarouselItem
-                  key={index}
-                  className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
-                >
-                  <motion.div
-                    className="h-full"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                match?.special?.type === 'event' ? null : (
+                  <CarouselItem
+                    key={index}
+                    className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
                   >
-                    <MatchCard match={match} />
-                  </motion.div>
-                </CarouselItem>
+                    <motion.div
+                      className="h-full"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <MatchCard match={match} />
+                    </motion.div>
+                  </CarouselItem>
+                )
               ))}
             </CarouselContent>
 
