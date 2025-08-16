@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Image from "next/image";
-import MatchCard from "@/components/MatchCard";
+import MatchCard from "@/components/MatchCard/MatchCard";
+import MatchCardSkeleton from "@/components/MatchCard/MatchCardSkeleton";
 import { motion } from 'framer-motion';
 import ExpoSlider from "@/components/swipper";
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselPagination } from "@/components/ui/carousel";
+
 
 // Section reveal logic
 const SECTION_KEYS = [
@@ -20,13 +22,16 @@ const SECTION_DELAY = 350; // ms between each section
 
 export default function Home() {
   const [matches, setMatches] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // 2. Add loading state
   const [error, setError] = useState(null);
-  // UI state (move these up before any use)
+
+  // UI state
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
 
   useEffect(() => {
     async function fetchMatches() {
+      setIsLoading(true);
       setError(null);
       try {
         const res = await fetch('/api/matches');
@@ -35,6 +40,8 @@ export default function Home() {
         setMatches(data);
       } catch (err) {
         setError(err.message || 'Unknown error');
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchMatches();
@@ -72,16 +79,16 @@ export default function Home() {
   ];
 
   // Filtered matches
-  const filteredAllMatches = allMatches.filter(m => {
-    return (selectedCategory === 'all' || m.matchType === selectedCategory) &&
-      (selectedFormat === 'all' || m.matchFormat === selectedFormat);
-  });
+  // const filteredAllMatches = allMatches.filter(m => {
+  //   return (selectedCategory === 'all' || m.matchType === selectedCategory) &&
+  //     (selectedFormat === 'all' || m.matchFormat === selectedFormat);
+  // });
 
   // Featured matches
-  const featuredSectionMatches = allMatches
-    .filter(m => isNotCompleted(m) && !isMatchFull(m))
-    .sort((a, b) => ((a.maxParticipants || 0) - (a.players?.length || 0)) - ((b.maxParticipants || 0) - (b.players?.length || 0)));
-  const featuredMatch = featuredSectionMatches[0] ? [featuredSectionMatches[0]] : [];
+  // const featuredSectionMatches = allMatches
+  //   .filter(m => isNotCompleted(m) && !isMatchFull(m))
+  //   .sort((a, b) => ((a.maxParticipants || 0) - (a.players?.length || 0)) - ((b.maxParticipants || 0) - (b.players?.length || 0)));
+  // const featuredMatch = featuredSectionMatches[0] ? [featuredSectionMatches[0]] : [];
 
   // Latest matches
   const latestSectionMatches = allMatches
@@ -89,7 +96,7 @@ export default function Home() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   // Full matches
-  const fullSectionMatches = allMatches.filter(m => isMatchFull(m) && isNotCompleted(m));
+  // const fullSectionMatches = allMatches.filter(m => isMatchFull(m) && isNotCompleted(m));
   const completedSectionMatches = allMatches.filter(isCompleted);
 
   // Helper: get matches for a type
@@ -135,7 +142,6 @@ export default function Home() {
         api.off("select", handleSelect);
       };
     }, [api, matches.length]);
-
 
     return (
       <motion.div
@@ -197,22 +203,35 @@ export default function Home() {
         ) : (
           <Carousel setApi={setApi} className="w-full relative">
             <CarouselContent>
-              {matches.map((match, index) => (
-                match?.special?.type === 'event' ? null : (
+              {isLoading ? (
+                // If loading, render skeleton items inside CarouselItem
+                Array.from({ length: 3 }).map((_, index) => (
                   <CarouselItem
                     key={index}
                     className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
                   >
-                    <motion.div
-                      className="h-full"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <MatchCard match={match} />
-                    </motion.div>
+                    <MatchCardSkeleton />
                   </CarouselItem>
-                )
-              ))}
+                ))
+              ) : (
+                // Otherwise, render the actual match cards
+                matches.map((match, index) => (
+                  match?.special?.type === 'event' ? null : (
+                    <CarouselItem
+                      key={index}
+                      className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
+                    >
+                      <motion.div
+                        className="h-full"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <MatchCard match={match} />
+                      </motion.div>
+                    </CarouselItem>
+                  )
+                ))
+              )}
             </CarouselContent>
 
             <CarouselPrevious />
