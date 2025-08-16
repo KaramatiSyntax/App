@@ -15,6 +15,7 @@ import { useRouteLoading } from "@/lib/hooks/useRouteLoading";
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { MatchStatus } from '@/components/MatchCard/UpcomingMatchTimer';
 
 // Modern blue tick SVG component with click handler
 function BlueTick({ onClick }) {
@@ -78,33 +79,6 @@ export default function ProfilePage() {
   const displayName = (userData?.firstName || userData?.lastName)
     ? `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
     : userData?.username || userData?.email;
-
-  // Helper to get time left as {hours, minutes, seconds}
-  function getTimeLeft(matchTime) {
-    const now = new Date().getTime();
-    const matchDate = new Date(matchTime).getTime();
-    const timeLeft = matchDate - now;
-
-    if (timeLeft <= 0) {
-      return { hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-    return { hours, minutes, seconds };
-  }
-
-  // Update timers every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newTimers = joinedMatches.map(match => getTimeLeft(match.time));
-      setTimers(newTimers);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [joinedMatches]);
 
   // Fetch joined matches when user data is available
   useEffect(() => {
@@ -392,7 +366,6 @@ https://turrani-esports.vercel.app/`.trim();
                         return new Date(b.time) - new Date(a.time);
                       })
                       .map((match, index) => {
-                        const timeLeft = timers[index] || { hours: 0, minutes: 0, seconds: 0 };
                         const isParticipant = match.players && match.players.some(
                           (p) =>
                             (userData._id && p.userId === userData._id) ||
@@ -400,28 +373,18 @@ https://turrani-esports.vercel.app/`.trim();
                             (userData.email && p.email === userData.email)
                         );
                         return (
-                          <div
-                            key={match._id || index}
-                            className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition-colors"
+                          <div key={match._id || index} className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 cursor-pointer hover:bg-white/10 transition-colors"
                             onClick={() => router.push(`/matches/joined/${match._id}`)}
                           >
                             <div className="relative w-10 h-10 rounded-md overflow-hidden flex-shrink-0">
-                              <Image
-                                src={match.banner || '/space.png'}
-                                alt={match.name}
-                                fill
-                                className="object-cover"
-                                sizes="40px"
-                              />
+                              <Image src={match.banner || '/space.png'} alt={match.name} fill className="object-cover" sizes="40px" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="text-white text-sm font-medium truncate">{match.name}</h4>
                               <div className="flex items-center gap-2 text-xs text-white/70">
                                 <span>{format(new Date(match.time), 'MMM dd, hh:mm a')}</span>
-                                <span className="text-blue-400">
-                                  • {timeLeft.hours}h {timeLeft.minutes}m left
-                                </span>
                               </div>
+                              <MatchStatus status={match.status} Time={match.time} />
                             </div>
                             {isParticipant && (match.roomId || match.roomPassword) && (
                               <Button

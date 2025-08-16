@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { motion, AnimatePresence } from "framer-motion";
 import { useUserData } from "@/lib/hooks/useUserData";
 import { useAlert } from "@/components/AlertProvider";
-import SlotBooker from "@/components/SlotBooker";
+import SlotBooker from "@/components/MatchCard/SlotBooker";
 import { Dialog as HeadlessDialog } from "@headlessui/react";
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';

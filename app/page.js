@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from "next/image";
-import MatchCard from "@/components/MatchCard";
+import MatchCard from "@/components/MatchCard/MatchCard";
 import { motion } from 'framer-motion';
 import ExpoSlider from "@/components/swipper";
 import { Separator } from "@/components/ui/separator"
