@@ -54,8 +54,8 @@ export default function AppWrapper({ children }) {
           <SplashScreen showAnimatedText={isOnAuthPage} />
         </div>
       )}
+      <TopNavbar />
       <SecondsProvider>
-        <TopNavbar />
         <main className={isPaddingRequired ? "pt-16" : "pt-0"}>
           {children}
         </main>

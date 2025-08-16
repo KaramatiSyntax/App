@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import Image from "next/image";
 import MatchCard from "@/components/MatchCard/MatchCard";
+import MatchCardSkeleton from "@/components/MatchCard/MatchCardSkeleton";
 import { motion } from 'framer-motion';
 import ExpoSlider from "@/components/swipper";
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselPagination } from "@/components/ui/carousel";
+
 
 // Section reveal logic
 const SECTION_KEYS = [
@@ -20,13 +22,16 @@ const SECTION_DELAY = 350; // ms between each section
 
 export default function Home() {
   const [matches, setMatches] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // 2. Add loading state
   const [error, setError] = useState(null);
-  // UI state (move these up before any use)
+
+  // UI state
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
 
   useEffect(() => {
     async function fetchMatches() {
+      setIsLoading(true);
       setError(null);
       try {
         const res = await fetch('/api/matches');
@@ -35,6 +40,8 @@ export default function Home() {
         setMatches(data);
       } catch (err) {
         setError(err.message || 'Unknown error');
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchMatches();
@@ -72,16 +79,16 @@ export default function Home() {
   ];
 
   // Filtered matches
-  const filteredAllMatches = allMatches.filter(m => {
-    return (selectedCategory === 'all' || m.matchType === selectedCategory) &&
-      (selectedFormat === 'all' || m.matchFormat === selectedFormat);
-  });
+  // const filteredAllMatches = allMatches.filter(m => {
+  //   return (selectedCategory === 'all' || m.matchType === selectedCategory) &&
+  //     (selectedFormat === 'all' || m.matchFormat === selectedFormat);
+  // });
 
   // Featured matches
-  const featuredSectionMatches = allMatches
-    .filter(m => isNotCompleted(m) && !isMatchFull(m))
-    .sort((a, b) => ((a.maxParticipants || 0) - (a.players?.length || 0)) - ((b.maxParticipants || 0) - (b.players?.length || 0)));
-  const featuredMatch = featuredSectionMatches[0] ? [featuredSectionMatches[0]] : [];
+  // const featuredSectionMatches = allMatches
+  //   .filter(m => isNotCompleted(m) && !isMatchFull(m))
+  //   .sort((a, b) => ((a.maxParticipants || 0) - (a.players?.length || 0)) - ((b.maxParticipants || 0) - (b.players?.length || 0)));
+  // const featuredMatch = featuredSectionMatches[0] ? [featuredSectionMatches[0]] : [];
 
   // Latest matches
   const latestSectionMatches = allMatches
@@ -89,7 +96,7 @@ export default function Home() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   // Full matches
-  const fullSectionMatches = allMatches.filter(m => isMatchFull(m) && isNotCompleted(m));
+  // const fullSectionMatches = allMatches.filter(m => isMatchFull(m) && isNotCompleted(m));
   const completedSectionMatches = allMatches.filter(isCompleted);
 
   // Helper: get matches for a type
@@ -135,7 +142,6 @@ export default function Home() {
         api.off("select", handleSelect);
       };
     }, [api, matches.length]);
-
 
     return (
       <motion.div
@@ -197,22 +203,35 @@ export default function Home() {
         ) : (
           <Carousel setApi={setApi} className="w-full relative">
             <CarouselContent>
-              {matches.map((match, index) => (
-                match?.special?.type === 'event' ? null : (
+              {isLoading ? (
+                // If loading, render skeleton items inside CarouselItem
+                Array.from({ length: 3 }).map((_, index) => (
                   <CarouselItem
                     key={index}
                     className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
                   >
-                    <motion.div
-                      className="h-full"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <MatchCard match={match} />
-                    </motion.div>
+                    <MatchCardSkeleton />
                   </CarouselItem>
-                )
-              ))}
+                ))
+              ) : (
+                // Otherwise, render the actual match cards
+                matches.map((match, index) => (
+                  match?.special?.type === 'event' ? null : (
+                    <CarouselItem
+                      key={index}
+                      className="min-w-0 basis-full sm:basis-1/2 lg:basis-1/3"
+                    >
+                      <motion.div
+                        className="h-full"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <MatchCard match={match} />
+                      </motion.div>
+                    </CarouselItem>
+                  )
+                ))
+              )}
             </CarouselContent>
 
             <CarouselPrevious />
@@ -233,45 +252,39 @@ export default function Home() {
 
       <Separator className="mb-8 h-2 bg-white/30" />
       {/* Announcement Section */}
-      <div className="mb-6 w-full flex justify-center relative">
+      <div className="mb-4 w-full flex justify-center relative">
         {/* Background gradient blur */}
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-white to-green-500 blur-lg opacity-40 rounded-xl z-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 blur-md opacity-30 rounded-xl z-0" />
 
         {/* Foreground content */}
-        <div className="relative text-white px-6 py-4 rounded-xl shadow-lg text-center font-bold text-lg sm:text-xl max-w-3xl w-full border border-white/90 backdrop-blur-sm z-20">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-400">
-            A special Event awaits...
+        <div className="relative text-white px-4 py-3 rounded-xl shadow-md text-center font-semibold text-sm sm:text-base max-w-md w-full border border-white/10 backdrop-blur-sm z-20">
+          <span className="opacity-90">
+            All <strong>Matches are FREE</strong> 🔥
           </span>
           <br />
-          <span className="opacity-90 text-sm sm:text-base">
-            Join us this <strong>15th August</strong> for something special.
+          <span className="text-xs sm:text-sm font-normal opacity-75">
+            Play unlimited & enjoy till <strong>Sunday</strong>.
           </span>
         </div>
       </div>
 
 
-      {/* Upcoming Matches Section */}
-      {renderSliderSection('Upcoming Matches', upcomingMatches, 'upcoming')}
-
-      {/* Featured Section */}
-      {renderSliderSection('Featured Matches', featuredMatch, 'featured')}
 
       {/* Latest Matches Section */}
       {renderSliderSection('Latest Matches', latestSectionMatches, 'latest')}
 
-      {/* All Matches section */}
-      {renderSliderSection('All Matches', allMatches, 'allmatches')}
+      {/* Upcoming Matches Section */}
+      {renderSliderSection('Upcoming Matches', upcomingMatches, 'upcoming')}
+
+      {/* Type sections */}
+      {renderSliderSection('Battle Royale', battleRoyaleMatches, 'battleroyale')}
+      {renderSliderSection('Clash Squad', clashSquadMatches, 'clashsquad')}
+      {renderSliderSection('Lone Wolf', loneWolfMatches, 'lonewolf')}
+
 
       {/* Completed Matches Section */}
       {renderSliderSection('Completed Matches', completedSectionMatches, 'completed')}
 
-      {/* Full Matches Section */}
-      {renderSliderSection('Full Matches', fullSectionMatches, 'fullmatches')}
-
-      {/* Type sections */}
-      {renderSliderSection('Lone Wolf', loneWolfMatches, 'lonewolf')}
-      {renderSliderSection('Battle Royale', battleRoyaleMatches, 'battleroyale')}
-      {renderSliderSection('Clash Squad', clashSquadMatches, 'clashsquad')}
     </div>
   );
 }
