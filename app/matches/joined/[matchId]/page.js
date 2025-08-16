@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
+import SlotBooker from '@/components/SlotBooker';
 
 // Remove the BlueTick component definition
 
@@ -21,6 +22,8 @@ export default function MatchDetailsPage({ params }) {
   const [tab, setTab] = useState('details');
   const [showRoom, setShowRoom] = useState(false);
   const [user, setUser] = useState(null);
+  const [showSlotBooker, setShowSlotBooker] = useState(false); // <-- added
+
   const router = useRouter();
 
   // Function to navigate to rules page
@@ -63,16 +66,15 @@ export default function MatchDetailsPage({ params }) {
     const allPlayers = Array.isArray(players) ? players : [];
 
     // Sort players by points (highest first) if showing results
-    const sortedPlayers = showPoints 
+    const sortedPlayers = showPoints
       ? [...allPlayers].sort((a, b) => (b.points || 0) - (a.points || 0))
       : allPlayers;
 
     return (
       <div className="divide-y divide-white/20">
         {sortedPlayers.map((player, idx) => (
-          <motion.div 
-            key={`${player.userId || player.username || player.email || player.inGameName}-${player.slotNo}-${player.team || 'no-team'}-${idx}`} 
-            className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 hover:bg-white/10 rounded-lg transition-colors"
+          <motion.div
+            key={`${player.userId || player.username || player.email || player.inGameName}-${player.slotNo}-${player.team || 'no-team'}-${idx}`}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: idx * 0.1 }}
@@ -131,9 +133,9 @@ export default function MatchDetailsPage({ params }) {
 
   // Deduplicate players for accurate count
   const uniquePlayers = match?.players ? match.players.reduce((acc, player) => {
-    if (!acc.some(existing => 
-      existing.userId === player.userId || 
-      existing.username === player.username || 
+    if (!acc.some(existing =>
+      existing.userId === player.userId ||
+      existing.username === player.username ||
       existing.email === player.email ||
       (existing.inGameName === player.inGameName && existing.slotNo === player.slotNo && existing.team === player.team)
     )) {
@@ -151,11 +153,11 @@ export default function MatchDetailsPage({ params }) {
     totalSlots = slotsPerTeam * 2;
     takenSlotsCount = Array.isArray(match.players)
       ? match.players.filter(p => {
-          const playerTeam = p.team?.toLowerCase();
-          return (playerTeam === 'team1' || playerTeam === 'team2' || 
-                  playerTeam === 'team 1' || playerTeam === 'team 2') && 
-                 p.slotNo;
-        }).length
+        const playerTeam = p.team?.toLowerCase();
+        return (playerTeam === 'team1' || playerTeam === 'team2' ||
+          playerTeam === 'team 1' || playerTeam === 'team 2') &&
+          p.slotNo;
+      }).length
       : 0;
   } else if (match) {
     // For BR: use maxParticipants for total slots
@@ -216,14 +218,14 @@ export default function MatchDetailsPage({ params }) {
         >
           <Card className="relative overflow-hidden w-full aspect-video shadow-2xl bg-white/10 border border-white/20">
             <div className="absolute top-0 left-0 h-full w-full">
-              <Image 
-                src={match?.banner || '/space.png'} 
-                alt={match?.name || 'Match'} 
-                fill 
+              <Image
+                src={match?.banner || '/space.png'}
+                alt={match?.name || 'Match'}
+                fill
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-              
+
               {/* Content Overlay */}
               <div className="absolute bottom-0 left-0 inset-0 p-4 sm:p-6 flex flex-col justify-between">
                 <div className="flex justify-between items-start">
@@ -248,10 +250,10 @@ export default function MatchDetailsPage({ params }) {
                     </Button>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">{match?.name || 'Match'}</h1>
-                  
+
                   <div className="flex items-center gap-2 sm:gap-4 text-white/90 text-xs sm:text-sm">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -266,7 +268,41 @@ export default function MatchDetailsPage({ params }) {
               </div>
             </div>
           </Card>
-          <div className="w-full h-1 bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-transparent rounded-full my-2" />
+          {/* Join Match Button */}
+          <div className="flex justify-center mt-3">
+            <Button
+              onClick={() => setShowSlotBooker(true)}
+              size="sm"
+              className="w-full sm:w-auto sm:px-32 md:px-40 lg:px-52 py-5 bg-cyan-500 text-white font-semibold rounded-lg text-base sm:text-lg"
+            >
+              Join Match
+            </Button>
+          </div>
+
+          {/* Modal Overlay with fade animation */}
+          <div
+            className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm
+    transition-opacity duration-300 ease-out
+    ${showSlotBooker ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+          >
+            {/* Modal Card with scale animation */}
+            <div
+              className={`relative w-full max-w-lg mx-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 
+      border border-white/10 rounded-2xl p-6 shadow-xl
+      transform transition-transform duration-300 ease-out
+      ${showSlotBooker ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowSlotBooker(false)}
+                className="absolute top-4 right-4 text-white/70 hover:text-white"
+              >
+                ✕
+              </button>
+              {/* SlotBooker */}
+              <SlotBooker match={match} />
+            </div>
+          </div>
         </motion.div>
 
         {/* Compact Stats */}
@@ -311,9 +347,9 @@ export default function MatchDetailsPage({ params }) {
           transition={{ delay: 0.2 }}
           className="flex gap-1 sm:gap-2 mb-3"
         >
-          <Button 
-            variant={tab === 'details' ? 'default' : 'outline'} 
-            size="sm" 
+          <Button
+            variant={tab === 'details' ? 'default' : 'outline'}
+            size="sm"
             onClick={() => setTab('details')}
             className="flex items-center gap-1 text-xs"
           >
@@ -321,9 +357,9 @@ export default function MatchDetailsPage({ params }) {
             <span className="hidden sm:inline">Details</span>
             <span className="sm:hidden">Info</span>
           </Button>
-          <Button 
-            variant={tab === 'joined' ? 'default' : 'outline'} 
-            size="sm" 
+          <Button
+            variant={tab === 'joined' ? 'default' : 'outline'}
+            size="sm"
             onClick={() => setTab('joined')}
             className="flex items-center gap-1 text-xs"
           >
@@ -331,9 +367,9 @@ export default function MatchDetailsPage({ params }) {
             <span className="hidden sm:inline">Joined ({joinedPlayersCount})</span>
             <span className="sm:hidden">{joinedPlayersCount}</span>
           </Button>
-          <Button 
-            variant={tab === 'results' ? 'default' : 'outline'} 
-            size="sm" 
+          <Button
+            variant={tab === 'results' ? 'default' : 'outline'}
+            size="sm"
             onClick={() => setTab('results')}
             className="flex items-center gap-1 text-xs"
           >
@@ -410,7 +446,7 @@ export default function MatchDetailsPage({ params }) {
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="text-base sm:text-lg font-semibold mb-3 flex items-center gap-2">
                   <Zap className="w-4 h-4" />
@@ -471,26 +507,24 @@ export default function MatchDetailsPage({ params }) {
                     .map((player, index) => (
                       <motion.div
                         key={`${player.userId || player.username || player.email || player.inGameName}-${player.slotNo}-${player.team || 'no-team'}-${index}`}
-                        className={`flex items-center gap-3 p-3 rounded-lg border ${
-                          index === 0 ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-yellow-500/30' :
+                        className={`flex items-center gap-3 p-3 rounded-lg border ${index === 0 ? 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-yellow-500/30' :
                           index === 1 ? 'bg-gradient-to-r from-gray-400/20 to-gray-500/20 border-gray-400/30' :
-                          index === 2 ? 'bg-gradient-to-r from-amber-600/20 to-amber-700/20 border-amber-600/30' :
-                          'bg-white/5 border-white/10'
-                        }`}
+                            index === 2 ? 'bg-gradient-to-r from-amber-600/20 to-amber-700/20 border-amber-600/30' :
+                              'bg-white/5 border-white/10'
+                          }`}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
                         {/* Rank Badge */}
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                          index === 0 ? 'bg-yellow-500 text-white' :
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${index === 0 ? 'bg-yellow-500 text-white' :
                           index === 1 ? 'bg-gray-400 text-white' :
-                          index === 2 ? 'bg-amber-600 text-white' :
-                          'bg-white/20 text-white'
-                        }`}>
+                            index === 2 ? 'bg-amber-600 text-white' :
+                              'bg-white/20 text-white'
+                          }`}>
                           {index + 1}
                         </div>
-                        
+
                         {/* Medal Icon for top 3 */}
                         {index < 3 && (
                           <div className="flex-shrink-0">
@@ -499,7 +533,7 @@ export default function MatchDetailsPage({ params }) {
                             {index === 2 && <span className="text-2xl">🥉</span>}
                           </div>
                         )}
-                        
+
                         {/* Player Info */}
                         <div className="flex-1 min-w-0">
                           <div className="font-semibold text-sm text-white truncate">
@@ -512,15 +546,14 @@ export default function MatchDetailsPage({ params }) {
                             <div className="text-xs text-purple-400">Team: {player.team}</div>
                           )}
                         </div>
-                        
+
                         {/* Points */}
                         <div className="flex flex-col items-end gap-1">
-                          <div className={`text-lg font-bold ${
-                            index === 0 ? 'text-yellow-400' :
+                          <div className={`text-lg font-bold ${index === 0 ? 'text-yellow-400' :
                             index === 1 ? 'text-gray-300' :
-                            index === 2 ? 'text-amber-400' :
-                            'text-blue-400'
-                          }`}>
+                              index === 2 ? 'text-amber-400' :
+                                'text-blue-400'
+                            }`}>
                             {player.points}
                           </div>
                           <div className="text-xs text-white/70">pts</div>
@@ -536,7 +569,7 @@ export default function MatchDetailsPage({ params }) {
         {/* Room ID/Pass Modal */}
         {showRoom && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50" onClick={() => setShowRoom(false)}>
-            <motion.div 
+            <motion.div
               className="bg-white dark:bg-zinc-900 rounded-xl p-4 sm:p-6 shadow-xl flex flex-col items-center gap-3 sm:gap-4 min-w-[280px] sm:min-w-[300px]"
               onClick={e => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.9 }}
