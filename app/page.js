@@ -233,45 +233,39 @@ export default function Home() {
 
       <Separator className="mb-8 h-2 bg-white/30" />
       {/* Announcement Section */}
-      <div className="mb-6 w-full flex justify-center relative">
+      <div className="mb-4 w-full flex justify-center relative">
         {/* Background gradient blur */}
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-white to-green-500 blur-lg opacity-40 rounded-xl z-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 blur-md opacity-30 rounded-xl z-0" />
 
         {/* Foreground content */}
-        <div className="relative text-white px-6 py-4 rounded-xl shadow-lg text-center font-bold text-lg sm:text-xl max-w-3xl w-full border border-white/90 backdrop-blur-sm z-20">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-400">
-            A special Event awaits...
+        <div className="relative text-white px-4 py-3 rounded-xl shadow-md text-center font-semibold text-sm sm:text-base max-w-md w-full border border-white/10 backdrop-blur-sm z-20">
+          <span className="opacity-90">
+            All <strong>Matches are FREE</strong> 🔥
           </span>
           <br />
-          <span className="opacity-90 text-sm sm:text-base">
-            Join us this <strong>15th August</strong> for something special.
+          <span className="text-xs sm:text-sm font-normal opacity-75">
+            Play unlimited & enjoy till <strong>Sunday</strong>.
           </span>
         </div>
       </div>
 
 
-      {/* Upcoming Matches Section */}
-      {renderSliderSection('Upcoming Matches', upcomingMatches, 'upcoming')}
-
-      {/* Featured Section */}
-      {renderSliderSection('Featured Matches', featuredMatch, 'featured')}
 
       {/* Latest Matches Section */}
       {renderSliderSection('Latest Matches', latestSectionMatches, 'latest')}
 
-      {/* All Matches section */}
-      {renderSliderSection('All Matches', allMatches, 'allmatches')}
+      {/* Upcoming Matches Section */}
+      {renderSliderSection('Upcoming Matches', upcomingMatches, 'upcoming')}
+
+      {/* Type sections */}
+      {renderSliderSection('Battle Royale', battleRoyaleMatches, 'battleroyale')}
+      {renderSliderSection('Clash Squad', clashSquadMatches, 'clashsquad')}
+      {renderSliderSection('Lone Wolf', loneWolfMatches, 'lonewolf')}
+
 
       {/* Completed Matches Section */}
       {renderSliderSection('Completed Matches', completedSectionMatches, 'completed')}
 
-      {/* Full Matches Section */}
-      {renderSliderSection('Full Matches', fullSectionMatches, 'fullmatches')}
-
-      {/* Type sections */}
-      {renderSliderSection('Lone Wolf', loneWolfMatches, 'lonewolf')}
-      {renderSliderSection('Battle Royale', battleRoyaleMatches, 'battleroyale')}
-      {renderSliderSection('Clash Squad', clashSquadMatches, 'clashsquad')}
     </div>
   );
 }
