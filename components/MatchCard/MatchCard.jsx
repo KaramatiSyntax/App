@@ -12,7 +12,7 @@ const MatchCard = ({ match }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { userData } = useUserData();
 
-  const alreadyJoinedPlayer = userData && localMatch.players && localMatch.players.some(
+  const alreadyJoinedPlayer = userData && match.players && match.players.some(
     (p) =>
       (userData.id && p.userId === userData.id) ||
       (userData.username && p.username === userData.username) ||

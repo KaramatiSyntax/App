@@ -141,7 +141,7 @@ export default function ProfilePage() {
 𓆩♡𓆪
 
 >ᴗ< Use my referral code: 
-  ╰┈➤【 KARA6XZ 】
+  ╰┈➤【 ${userData.referralCode} 】
 
 𖡡 Sign up now & get ₹5!
 // Join India's fastest growing community!
