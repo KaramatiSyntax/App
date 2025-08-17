@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import SlotBooker from '@/components/MAtchCard/SlotBooker';
+import SlotBooker from '@/components/MatchCard/SlotBooker';
 
 // Remove the BlueTick component definition
 

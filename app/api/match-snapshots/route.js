@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-import Match from '@/lib/models/Match'; // Assuming you have a Match model
+import Match from '@/lib/models/matches';
 import MatchSnapshot from '@/lib/models/matchSnapshot';
 
 export async function PUT(request) {
