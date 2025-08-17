@@ -91,20 +91,23 @@ export default function EventPage() {
 
       {/* Register Button */}
       <motion.div
-        className="flex items-center justify-center mb-16 relative"
+        className="flex items-center justify-center relative mb-2"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, duration: 0.5 }}
       >
         <GlowEffect
-          colors={["#FF6F00", "#FFFFFF", "#138808"]}
+          colors={["red", "black", "#138808"]}
           mode='flowHorizontal'
           blur='soft'
         />
         <button className='relative inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-white outline-1 bg-zinc-700/5 outline-white'>
-          Join the battle
+          battle ended
         </button>
       </motion.div>
+      <span className="text-white/60 text-xs sm:text-sm mb-16">
+        Registration closed on 14th August 2025, 11:59 PM
+      </span>
 
       {/* Event Details */}
       <div className="w-full max-w-3xl px-6 mb-10">

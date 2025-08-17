@@ -158,7 +158,7 @@ export default function SlotBooker({ match, onBook }) {
       return;
     }
     if (!selectedSlot || !inGameName.trim()) {
-      showErrorAlert('Error', 'Please select a slot and enter your in-game name.');
+      showErrorAlert('Error', 'Please select a slot and enter your ID name.');
       return;
     }
     if (insufficientCoins) {
@@ -340,7 +340,7 @@ export default function SlotBooker({ match, onBook }) {
             </div>
           )}
           <form onSubmit={handleBook} className="space-y-4 mt-4">
-            <Label htmlFor="inGameName">In-Game Name</Label>
+            <Label htmlFor="inGameName">FREE FIRE ID name</Label>
             <Input
               id="inGameName"
               value={inGameName}

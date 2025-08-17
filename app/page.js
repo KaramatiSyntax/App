@@ -197,7 +197,7 @@ export default function Home() {
               />
             </motion.div>
             <p className="leading-snug">
-              No matches available for this section.
+              No matches available.
             </p>
           </div>
         ) : (

@@ -77,8 +77,8 @@ export default function IndependenceDayCountdown({ eventTime }) {
           )}
         </div>
       ) : (
-        <div className="text-center text-green-300 font-bold text-lg sm:text-xl">
-          🎉 Event Started
+        <div className="text-center text-red-300 font-bold text-lg sm:text-xl">
+          Event Ended
         </div>
       )}
     </div>

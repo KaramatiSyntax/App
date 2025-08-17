@@ -193,13 +193,25 @@ export default function ManagerPage() {
 
   const handleEdit = (match) => {
     setEditingMatch(match);
-    const matchTime = new Date(match.time);
-    const formattedTime = matchTime.toISOString().slice(0, 16);
+     
+     const localDate = new Date(match.time);
+
+    // 2. Manually build the required 'YYYY-MM-DDTHH:mm' string from local components.
+    // We use padStart() to add a leading zero if a value is a single digit (e.g., '08' instead of '8').
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-indexed, so we add 1.
+    const day = String(localDate.getDate()).padStart(2, '0');
+    const hours = String(localDate.getHours()).padStart(2, '0');
+    const minutes = String(localDate.getMinutes()).padStart(2, '0');
+
+    // 3. This is the correctly formatted string for the input field.
+    const formattedLocalDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
     setFormData({
       matchId: match.matchId || "",
       name: match.name,
       status: match.status,
-      time: formattedTime,
+      time: formattedLocalDateTime,
       entry: match.entry,
       winnings: match.winnings?.toString() || "0",
       roomId: match.roomId !== undefined ? match.roomId : "",
@@ -505,7 +517,7 @@ export default function ManagerPage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <Label htmlFor="time" className="text-xs">Match Time</Label>
+                      <Label htmlFor="time" className="text-xs">Time</Label>
                       <Input
                         id="time"
                         type="datetime-local"

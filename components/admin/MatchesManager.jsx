@@ -85,10 +85,10 @@ export default function MatchesManager() {
       return;
     }
     try {
-      const url = editingMatch 
+      const url = editingMatch
         ? `/api/matches?id=${editingMatch._id}`
         : "/api/matches";
-      
+
       const matchData = {
         ...formData,
         time: new Date(formData.time).toISOString(),
@@ -133,16 +133,31 @@ export default function MatchesManager() {
   };
 
   const handleEdit = (match) => {
-    console.log('Editing match:', match); // Debug log
+    console.log('Editing match:', match);
     setEditingMatch(match);
-    const matchTime = new Date(match.time);
-    const formattedTime = matchTime.toISOString().slice(0, 16);
+
+    // 1. Create a Date object from the database time string.
+    // The browser automatically interprets this in the user's local timezone.
+    const localDate = new Date(match.time);
+
+    // 2. Manually build the required 'YYYY-MM-DDTHH:mm' string from local components.
+    // We use padStart() to add a leading zero if a value is a single digit (e.g., '08' instead of '8').
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-indexed, so we add 1.
+    const day = String(localDate.getDate()).padStart(2, '0');
+    const hours = String(localDate.getHours()).padStart(2, '0');
+    const minutes = String(localDate.getMinutes()).padStart(2, '0');
+
+    // 3. This is the correctly formatted string for the input field.
+    const formattedLocalDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    // 4. Set the form data using the locally formatted time.
     setFormData({
       matchId: match.matchId || "",
       name: match.name,
       banner: match.banner || "",
       status: match.status,
-      time: formattedTime,
+      time: formattedLocalDateTime, // Use the new local time string
       entry: match.entry,
       winnings: match.winnings,
       roomId: match.roomId !== undefined ? match.roomId : "",
@@ -235,10 +250,10 @@ export default function MatchesManager() {
 
       // Wait for all updates to complete
       const results = await Promise.all(updatePromises);
-      
+
       // Check if all updates were successful
       const failedUpdates = results.filter(result => !result.success);
-      
+
       if (failedUpdates.length === 0) {
         setPointsMessage({ type: 'success', message: 'All points updated successfully! Notifications sent and coins updated.' });
         fetchMatches();
@@ -283,7 +298,7 @@ export default function MatchesManager() {
       running: { color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200", icon: "🔥" },
       completed: { color: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200", icon: "✅" }
     };
-    
+
     const config = statusConfig[status] || statusConfig.upcoming;
     return (
       <Badge className={`${config.color} font-medium`}>
@@ -298,7 +313,7 @@ export default function MatchesManager() {
       Duo: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
       Squad: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200"
     };
-    
+
     return (
       <Badge className={`${formatConfig[format] || formatConfig.Squad} font-medium`}>
         {format}
@@ -308,7 +323,7 @@ export default function MatchesManager() {
 
   const filteredMatches = matches.filter(match => {
     const matchesSearch = match.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         match.matchId?.toLowerCase().includes(searchQuery.toLowerCase());
+      match.matchId?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || match.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -393,7 +408,7 @@ export default function MatchesManager() {
                     id="time"
                     type="datetime-local"
                     value={formData.time}
-                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                    onChange={(e) => { setFormData({ ...formData, time: e.target.value }); }}
                     required
                   />
                 </div>
@@ -547,14 +562,13 @@ export default function MatchesManager() {
               Update player points and automatically adjust their wallet coins. Points are converted 1:1 to coins. Use Save Changes to apply all updates at once.
             </p>
           </DialogHeader>
-          
+
           {/* Points Message */}
           {pointsMessage.type && (
-            <div className={`p-3 rounded-lg border ${
-              pointsMessage.type === 'success' 
+            <div className={`p-3 rounded-lg border ${pointsMessage.type === 'success'
                 ? 'bg-green-100 border-green-300 text-green-800 dark:bg-green-900/20 dark:border-green-700/30 dark:text-green-200'
                 : 'bg-red-100 border-red-300 text-red-800 dark:bg-red-900/20 dark:border-red-700/30 dark:text-red-200'
-            }`}>
+              }`}>
               <div className="flex items-center gap-2">
                 {pointsMessage.type === 'success' ? (
                   <CheckCircle className="w-4 h-4" />
@@ -565,7 +579,7 @@ export default function MatchesManager() {
               </div>
             </div>
           )}
-          
+
           {selectedMatch && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
@@ -598,7 +612,7 @@ export default function MatchesManager() {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
@@ -613,10 +627,10 @@ export default function MatchesManager() {
                         {selectedMatch.players
                           .sort((a, b) => (b.points || 0) - (a.points || 0))
                           .map((player, index) => {
-                            const currentPoints = pendingPointsUpdates[player.userId] !== undefined 
-                              ? pendingPointsUpdates[player.userId] 
+                            const currentPoints = pendingPointsUpdates[player.userId] !== undefined
+                              ? pendingPointsUpdates[player.userId]
                               : (player.points || 0);
-                            
+
                             return (
                               <TableRow key={player.userId || player._id || index} className="hover:bg-accent/50">
                                 <TableCell>
@@ -680,7 +694,7 @@ export default function MatchesManager() {
                       </TableBody>
                     </Table>
                   </div>
-                  
+
                   {/* Save Button */}
                   <div className="flex justify-end pt-4 border-t border-border">
                     <Button
@@ -795,34 +809,34 @@ export default function MatchesManager() {
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Banner</TableHead>
-            <TableHead>Match ID</TableHead>
-            <TableHead>Tournament</TableHead>
-            <TableHead>Format</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead>Entry/Winnings</TableHead>
-            <TableHead>Participants</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Banner</TableHead>
+                  <TableHead>Match ID</TableHead>
+                  <TableHead>Tournament</TableHead>
+                  <TableHead>Format</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Entry/Winnings</TableHead>
+                  <TableHead>Participants</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredMatches.length > 0 ? (
                   filteredMatches.map((match) => (
                     <TableRow key={match._id || match.matchId || match.name} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                <TableCell>
+                      <TableCell>
                         <div className="relative w-20 h-12 rounded-lg overflow-hidden border">
-                    <Image
-                      src={match.banner || "https://freeimage.host/i/FCqtWHN"}
-                      alt={match.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </TableCell>
+                          <Image
+                            src={match.banner || "https://freeimage.host/i/FCqtWHN"}
+                            alt={match.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      </TableCell>
                       <TableCell className="font-mono text-sm">{match.matchId}</TableCell>
                       <TableCell>
                         <div>
@@ -837,9 +851,9 @@ export default function MatchesManager() {
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4 text-gray-400" />
                           <span className="text-sm">
-                            {new Date(match.time).toLocaleTimeString([], { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
+                            {new Date(match.time).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit'
                             })}
                           </span>
                         </div>
@@ -860,63 +874,63 @@ export default function MatchesManager() {
                         </div>
                       </TableCell>
                       <TableCell>{getStatusBadge(match.status)}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
                             size="sm"
-                      onClick={() => handleEdit(match)}
+                            onClick={() => handleEdit(match)}
                             className="h-8 w-8 p-0"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
                             size="sm"
-                      onClick={() => handleManagePoints(match)}
+                            onClick={() => handleManagePoints(match)}
                             className="h-8 w-8 p-0 bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/30 border-yellow-200 dark:border-yellow-700"
-                      title="Manage Points"
-                    >
-                      <Award className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-                    </Button>
-                    <Button
-                      variant="outline"
+                            title="Manage Points"
+                          >
+                            <Award className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+                          </Button>
+                          <Button
+                            variant="outline"
                             size="sm"
-                      onClick={() => { setPlayerDialogMatch(match); setIsPlayerDialogOpen(true); }}
+                            onClick={() => { setPlayerDialogMatch(match); setIsPlayerDialogOpen(true); }}
                             className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700"
-                      title="View Players"
-                    >
-                      <Users className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
+                            title="View Players"
+                          >
+                            <Users className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
                             size="sm"
-                      onClick={() => handleDelete(match._id)}
+                            onClick={() => handleDelete(match._id)}
                             className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
                     <TableCell colSpan={9} className="text-center py-8">
                       <div className="flex flex-col items-center gap-2">
                         <p className="text-gray-500 dark:text-gray-400 font-medium">No matches found</p>
                         <p className="text-sm text-gray-400 dark:text-gray-500">
-                          {searchQuery || statusFilter !== "all" 
-                            ? "Try adjusting your filters" 
+                          {searchQuery || statusFilter !== "all"
+                            ? "Try adjusting your filters"
                             : "Create your first match to get started"
                           }
                         </p>
                       </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
