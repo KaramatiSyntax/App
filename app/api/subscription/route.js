@@ -1,180 +1,75 @@
-import mongoose from "mongoose";
-import { NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnect";
-import Subscription from "@/lib/models/subscription";
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/dbConnect';
+import { NotificationSubscription, User } from '@/lib/models/subscription'; 
 
-export async function GET(request) {
-    try {
-        const { searchParams } = new URL(request.url);
-        const userEmail = searchParams.get('userEmail');
-
-        if (!userEmail) {
-            return NextResponse.json(
-                { error: "User email is required" },
-                { status: 400 }
-            );
-        }
-
-        await dbConnect();
-        console.log("Fetching subscription for:", userEmail);
-        const subscription = await Subscription.findOne({ userEmail });
-        console.log("Subscription found:", !!subscription);
-        if (subscription) {
-            console.log("Notification count:", subscription.notifications?.length || 0);
-        }
-
-        if (!subscription) {
-            // Return empty subscription instead of 404
-            console.log("No subscription found, returning empty subscription");
-            return NextResponse.json({
-                userEmail,
-                notifications: [],
-                endpoint: null,
-                keys: {
-                    auth: null,
-                    p256dh: null
-                }
-            });
-        }
-
-        return NextResponse.json(subscription);
-    } catch (error) {
-        console.error("Error fetching subscription:", error);
-        return NextResponse.json(
-            { error: "Failed to fetch subscription" },
-            { status: 500 }
-        );
-    }
-}
-
+/**
+ * @description Saves a push notification subscription for a user.
+ * It finds the user by email, then checks if a subscription for the given
+ * endpoint already exists to avoid duplicates. If not, it creates a new one.
+ * This correctly handles a user having multiple subscriptions on different devices.
+ */
 export async function POST(request) {
     try {
+        await dbConnect();
         const body = await request.json();
-        const { userEmail, endpoint, keys } = body;
+        const { userEmail, subscriptionObject } = body;
 
-        if (!userEmail || !endpoint || !keys) {
+        // 1. Validate the incoming data from the frontend
+        if (!userEmail || !subscriptionObject || !subscriptionObject.endpoint || !subscriptionObject.keys) {
             return NextResponse.json(
-                { error: 'Missing required fields' },
+                { success: false, error: 'Missing required fields: userEmail and subscriptionObject.' },
                 { status: 400 }
             );
         }
 
-        await dbConnect();
-
-        // Check if subscription already exists
-        let subscription = await Subscription.findOne({ userEmail });
-
-        if (subscription) {
-            // Update existing subscription
-            subscription.endpoint = endpoint;
-            subscription.keys = keys;
-        } else {
-            // Create new subscription
-            subscription = new Subscription({
-                userEmail,
-                endpoint,
-                keys,
-                notifications: []
-            });
-        }
-
-        await subscription.save();
-
-        return NextResponse.json({ 
-            message: 'Subscription saved successfully',
-            subscription 
-        });
-    } catch (error) {
-        console.error('Error saving subscription:', error);
-        return NextResponse.json(
-            { error: 'Failed to save subscription' },
-            { status: 500 }
-        );
-    }
-}
-
-export async function PUT(request) {
-    try {
-        const { searchParams } = new URL(request.url);
-        const id = searchParams.get('id');
-        const data = await request.json();
-        const { userEmail, notificationId, markAllAsRead, notifications } = data;
-
-        await dbConnect();
-
-        // If id is provided, update by subscription ID
-        if (id) {
-            const subscription = await Subscription.findByIdAndUpdate(
-                id,
-                { notifications },
-                { new: true, runValidators: true }
-            );
-
-            if (!subscription) {
-                return NextResponse.json(
-                    { error: "Subscription not found" },
-                    { status: 404 }
-                );
-            }
-
-            return NextResponse.json(subscription);
-        }
-
-        // Otherwise, update by userEmail
-        if (!userEmail) {
+        // 2. Find the user by their email to get their unique _id
+        const user = await User.findOne({ email: userEmail });
+        if (!user) {
             return NextResponse.json(
-                { error: "User email is required" },
-                { status: 400 }
-            );
-        }
-
-        let updateOperation = {};
-        let arrayFilters = [];
-
-        if (markAllAsRead) {
-            updateOperation = {
-                $set: {
-                    'notifications.$[].read': true
-                }
-            };
-        } else if (notificationId) {
-            updateOperation = {
-                $set: {
-                    'notifications.$[elem].read': true
-                }
-            };
-            arrayFilters = [
-                { 'elem._id': new mongoose.Types.ObjectId(notificationId) }
-            ];
-        } else {
-            return NextResponse.json(
-                { error: "Either notificationId or markAllAsRead must be provided" },
-                { status: 400 }
-            );
-        }
-
-        const subscription = await Subscription.findOneAndUpdate(
-            { userEmail },
-            updateOperation,
-            {
-                new: true,
-                runValidators: true,
-                arrayFilters
-            }
-        );
-
-        if (!subscription) {
-            return NextResponse.json(
-                { error: "Subscription not found" },
+                { success: false, error: 'User not found.' },
                 { status: 404 }
             );
         }
 
-        return NextResponse.json(subscription);
+        // 3. Check if a subscription with this exact endpoint already exists.
+        // This prevents creating duplicate subscriptions for the same device/browser.
+        const existingSubscription = await NotificationSubscription.findOne({
+            endpoint: subscriptionObject.endpoint,
+        });
+
+        if (existingSubscription) {
+            // The subscription already exists. We can just send a success response.
+            return NextResponse.json({
+                success: true,
+                message: 'This device is already subscribed.',
+                subscription: existingSubscription,
+            }, { status: 200 });
+        }
+
+        // 4. If it's a new subscription, create and save it.
+        const newSubscription = new NotificationSubscription({
+            user: user._id, // Link to the user's permanent ObjectId
+            endpoint: subscriptionObject.endpoint,
+            keys: {
+                p256dh: subscriptionObject.keys.p256dh,
+                auth: subscriptionObject.keys.auth,
+            },
+        });
+
+        await newSubscription.save();
+
+        // Use status 201 Created for a new resource.
+        return NextResponse.json({
+            success: true,
+            message: 'Subscription saved successfully.',
+            subscription: newSubscription,
+        }, { status: 201 });
+
     } catch (error) {
-        console.error("Error updating subscription:", error);
+        console.error('Error saving subscription:', error);
+        // Provide a generic error message to the client
         return NextResponse.json(
-            { error: "Failed to update subscription" },
+            { success: false, error: 'An internal server error occurred.' },
             { status: 500 }
         );
     }

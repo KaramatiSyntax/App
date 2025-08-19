@@ -613,7 +613,7 @@ export default function ChatbotPage() {
             </div>
             <button
               type="submit"
-              className="rounded-full bg-cyan-500 hover:bg-cyan-600 text-white shadow-cyan-500/40 shadow-lg h-8 w-8 flex items-center justify-center mb-1 flex-shrink-0"
+              className="rounded-full bg-cyan-500 hover:bg-cyan-600 text-white shadow-cyan-500/40 shadow-lg h-8 w-8 flex items-center justify-center mb-1 flex-shrink-0 transition-all duration-200"
               disabled={!chatInput.trim() || botTyping}
               aria-label="Send"
             >

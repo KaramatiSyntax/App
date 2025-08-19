@@ -9,6 +9,18 @@ import { usePathname } from 'next/navigation';
 import { SecondsProvider } from './MatchCard/SecondsContext';
 
 export default function AppWrapper({ children }) {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(registration => {
+          console.log('SW registered: ', registration);
+        }).catch(registrationError => {
+          console.log('SW registration failed: ', registrationError);
+        });
+      });
+    }
+  }, []);
+
   const { isAppReady } = useAppLoading();
   const pathname = usePathname();
 
