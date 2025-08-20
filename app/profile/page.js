@@ -11,11 +11,8 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useAlert } from "@/components/AlertProvider";
 import { useUserData } from "@/lib/hooks/useUserData";
-import { useRouteLoading } from "@/lib/hooks/useRouteLoading";
 import { useRouter } from 'next/navigation';
 import { createPortal } from 'react-dom';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { MatchStatus } from '@/components/MatchCard/UpcomingMatchTimer';
 
 // Modern blue tick SVG component with click handler
 function BlueTick({ onClick }) {
@@ -62,6 +59,7 @@ export default function ProfilePage() {
   const [joinedLoading, setJoinedLoading] = useState(false);
   const [showRoomFor, setShowRoomFor] = useState(null);
   const [copiedField, setCopiedField] = useState(null);
+  const [showAllMatches, setShowAllMatches] = useState(false);
   const { showSuccessAlert, showErrorAlert } = useAlert();
   const router = useRouter();
   const userCoins = userData?.coins ?? 0;
@@ -148,6 +146,11 @@ Don't miss out on the action!`.trim();
         });
     }
   };
+
+  const upcomingMatches = joinedMatches.filter(match => match.status === 'upcoming')
+                                        .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+  const matchesToDisplay = showAllMatches ? upcomingMatches : upcomingMatches.slice(0, 3);
 
   if (!userData) {
     return (
@@ -287,7 +290,7 @@ Don't miss out on the action!`.trim();
                   </div>
                   <h2 className="text-xl font-bold text-purple-700 dark:text-white flex-1">Your Matches</h2>
                   <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white border-0 text-xs">
-                    {joinedMatches.length} Matches
+                    {upcomingMatches.length} Upcoming Matches
                   </Badge>
                 </div>
 
@@ -296,7 +299,7 @@ Don't miss out on the action!`.trim();
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400"></div>
                     <span className="text-purple-400 text-sm font-medium mt-2">Loading your matches...</span>
                   </div>
-                ) : joinedMatches.length === 0 ? (
+                ) : upcomingMatches.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-32">
                     <div className="p-3 bg-gradient-to-r from-purple-500/20 to-fuchsia-500/20 rounded-full mb-3">
                       <Gamepad2 className="w-8 h-8 text-purple-400" />
@@ -305,17 +308,9 @@ Don't miss out on the action!`.trim();
                     <p className="text-white/50 text-xs mt-1">Join your first match to start gaming!</p>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    {[...joinedMatches]
-                      .sort((a, b) => {
-                        if (a.status === 'upcoming' && b.status === 'upcoming') {
-                          return new Date(a.time) - new Date(b.time);
-                        }
-                        if (a.status === 'upcoming' && b.status !== 'upcoming') return -1;
-                        if (a.status !== 'upcoming' && b.status === 'upcoming') return 1;
-                        return new Date(b.time) - new Date(a.time);
-                      })
-                      .map((match, index) => {
+                  <>
+                    <div className="space-y-2">
+                      {matchesToDisplay.map((match, index) => {
                         const isParticipant = match.players && match.players.some(
                           (p) =>
                             (userData._id && p.userId === userData._id) ||
@@ -334,7 +329,9 @@ Don't miss out on the action!`.trim();
                               <div className="flex items-center gap-2 text-xs text-white/70">
                                 <span>{format(new Date(match.time), 'MMM dd, hh:mm a')}</span>
                               </div>
-                              <MatchStatus status={match.status} Time={match.time} />
+                              <span className="text-sm font-semibold mt-1">
+                                <span className="text-purple-400">Upcoming</span>
+                              </span>
                             </div>
                             {isParticipant && (match.roomId || match.roomPassword) && (
                               <Button
@@ -353,7 +350,20 @@ Don't miss out on the action!`.trim();
                           </div>
                         );
                       })}
-                  </div>
+                    </div>
+                    {upcomingMatches.length > 3 && (
+                      <div className="flex justify-center mt-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full text-purple-400 border-purple-400 hover:bg-purple-400 hover:text-white transition-colors"
+                          onClick={() => setShowAllMatches(!showAllMatches)}
+                        >
+                          {showAllMatches ? 'Show Less' : 'Show All'}
+                        </Button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </Card>

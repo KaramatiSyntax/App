@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAlert } from "@/components/AlertProvider";
-import { Lock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 /**
@@ -233,25 +232,33 @@ export default function SlotBooker({ match, onBook }) {
 
   // UI rendering
   return (
-    <div className="max-w-xl mx-auto p-4 bg-white dark:bg-gray-900 rounded-lg shadow space-y-6">
-      <h2 className="text-2xl font-bold mb-2">Book Your Slot</h2>
+    <div className="max-w-xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-900 rounded-lg shadow space-y-6">
+      <h2 className="text-xl sm:text-2xl font-bold mb-2 text-center">Book Your Slot</h2>
+      
+      {/* Progress bar and slot count */}
       <div className="mb-4">
         <Progress value={Math.round((takenSlotsCount / totalSlots) * 100)} />
         <div className="text-xs text-gray-600 dark:text-gray-300 mt-1 text-center">
           {takenSlotsCount} / {totalSlots} slots filled
         </div>
       </div>
-      <div className="mb-2 text-cyan-700 font-semibold">
-        Entry Fee: <span className="text-cyan-900">{match.entry} coins</span>
+      
+      {/* Entry Fee */}
+      <div className="mb-2 text-center text-base sm:text-lg font-semibold text-cyan-700">
+        Entry Fee: <span className="text-cyan-900 dark:text-cyan-300">{match.entry} coins</span>
       </div>
-      {coinError && <div className="text-red-500 text-sm mb-2">{coinError}</div>}
+      
+      {/* Error messages */}
+      {error && <div className="text-red-500 text-sm mb-2 text-center">{error}</div>}
+      {coinError && <div className="text-red-500 text-sm mb-2 text-center">{coinError}</div>}
+      
       {alreadyJoinedPlayer ? (
         <div className="space-y-4">
           <Button
             className="w-full bg-green-600 text-white hover:bg-green-700"
             onClick={() => setShowRoom(!showRoom)}
           >
-            {showRoom ? 'Hide Id Pass' : 'Show Id Pass'}
+            {showRoom ? 'Hide ID & Pass' : 'Show ID & Pass'}
           </Button>
           {showRoom && (
             <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-center space-y-2">
@@ -263,20 +270,19 @@ export default function SlotBooker({ match, onBook }) {
       ) : (
         <>
           {isTeamMatch(match.matchType) ? (
-            <div className="flex gap-8 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center">
               {["Team 1", "Team 2"].map((team, teamIdx) => {
                 const slotsPerTeam = getSlotsPerTeam(match.matchFormat);
-                // For each team, get their slots (global slot numbers)
                 const teamSlots = Array.from({ length: slotsPerTeam }, (_, i) => {
                   const globalSlotNo = teamIdx === 0 ? i + 1 : slotsPerTeam + i + 1;
                   return slotRows[0].find(slot => slot.slotNo === globalSlotNo);
                 });
                 return (
-                  <div key={team} className="flex-1 border rounded-lg p-3 bg-gray-50 dark:bg-gray-800">
-                    <div className="mb-2 font-bold text-lg text-center text-cyan-700 dark:text-cyan-300 uppercase tracking-wide">
+                  <div key={team} className="flex-1 border rounded-lg p-3 sm:p-4 bg-gray-50 dark:bg-gray-800">
+                    <div className="mb-2 font-bold text-base sm:text-lg text-center text-cyan-700 dark:text-cyan-300 uppercase tracking-wide">
                       {team}
                     </div>
-                    <div className={`grid gap-2 ${teamSlots.length === 1 ? "grid-cols-1" : teamSlots.length === 2 ? "grid-cols-2" : "grid-cols-2 md:grid-cols-4"}`}>
+                    <div className={`grid gap-2 ${teamSlots.length === 1 ? "grid-cols-1" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"}`}>
                       {teamSlots.map((slot, idx) => (
                         <Button
                           key={slot.slotNo}
@@ -285,23 +291,17 @@ export default function SlotBooker({ match, onBook }) {
                               ? "default"
                               : "outline"
                           }
-                          className={`w-full flex flex-col items-center relative ${slot.taken ? "opacity-50 cursor-not-allowed" : ""}`}
+                          className={`w-full relative h-12 flex flex-col items-center justify-center ${slot.taken ? "opacity-50 cursor-not-allowed" : ""}`}
                           disabled={slot.taken || submitting}
                           onClick={() => {
                             setSelectedSlot({ slotNo: slot.slotNo, team, teamSlot: idx + 1 });
                             setSelectedTeam(team);
                           }}
                         >
-                          <span className="font-semibold text-base">Slot {idx + 1}</span>
-                          {/* Global slot number in top-right corner, small and light */}
+                          <span className="font-semibold text-sm">Slot {idx + 1}</span>
                           <span className="absolute top-1 right-1 text-[10px] text-gray-400 bg-white/80 dark:bg-gray-900/80 px-1 rounded z-10 pointer-events-none">
                             # {slot.slotNo}
                           </span>
-                          {slot.taken && (
-                            <span className="absolute bottom-1 right-1 flex items-center gap-1 text-xs text-red-500 font-bold z-20">
-                              <Lock className="w-3 h-3 mr-0.5" /> Taken
-                            </span>
-                          )}
                         </Button>
                       ))}
                     </div>
@@ -311,8 +311,8 @@ export default function SlotBooker({ match, onBook }) {
             </div>
           ) : (
             <div>
-              <div className="mb-2 font-semibold">Available Slots</div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="mb-2 text-base font-semibold text-center sm:text-left">Available Slots</div>
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
                 {slotRows[0].map((slot) => (
                   <Button
                     key={slot.slotNo}
@@ -321,19 +321,14 @@ export default function SlotBooker({ match, onBook }) {
                         ? "default"
                         : "outline"
                     }
-                    className={`w-full relative ${slot.taken ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`w-full h-12 relative ${slot.taken ? "opacity-50 cursor-not-allowed" : ""}`}
                     disabled={slot.taken || submitting}
                     onClick={() => {
                       setSelectedSlot({ slotNo: slot.slotNo });
                       setSelectedTeam(null);
                     }}
                   >
-                    {slot.slotNo}
-                    {slot.taken && (
-                      <span className="absolute top-1 right-1 flex items-center gap-1 text-xs text-red-500 font-bold">
-                        <Lock className="w-3 h-3 mr-0.5" /> Taken
-                      </span>
-                    )}
+                    <span className="text-sm">{slot.slotNo}</span>
                   </Button>
                 ))}
               </div>
@@ -347,6 +342,7 @@ export default function SlotBooker({ match, onBook }) {
               onChange={(e) => setInGameName(e.target.value)}
               placeholder="Enter your in-game name"
               required
+              className="text-sm"
             />
             <Button
               type="submit"
@@ -360,4 +356,4 @@ export default function SlotBooker({ match, onBook }) {
       )}
     </div>
   );
-} 
+}
