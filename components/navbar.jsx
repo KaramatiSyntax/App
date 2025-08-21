@@ -17,6 +17,8 @@ const navItems = [
 ];
 
 export default function Menu({ botTyping }) {
+  // All original code is commented out below
+  /*
   const pathname = usePathname();
   const [selectorLeft, setSelectorLeft] = useState(0);
   const containerRef = useRef(null);
@@ -125,7 +127,7 @@ export default function Menu({ botTyping }) {
       className="fixed z-50 left-1/2 -translate-x-1/2 w-[95%] max-w-md px-2 bottom-4 border border-border/20 backdrop-blur-xl rounded-2xl shadow-xl transition-all duration-300 ease-out"
     >
       <div className="flex flex-col gap-0">
-        {/* Chat Input - Only visible on chatbot page */}
+        // Chat Input - Only visible on chatbot page
         <AnimatePresence>
           {isChatInputVisible && (
             <motion.div
@@ -141,7 +143,7 @@ export default function Menu({ botTyping }) {
               >
                 <div className={`w-full flex items-end gap-2 rounded-t-2xl border-t border-l border-r shadow-xl backdrop-blur-xl px-3 py-2 bg-gradient-to-r from-gray-900/90 to-black/90 border-border/20`}>
                   <div className="w-full relative flex items-end">
-                    {/* Animated placeholder div with better positioning */}
+                    // Animated placeholder div with better positioning
                     <AnimatePresence mode="wait">
                       {chatInput.length === 0 && (
                         <motion.div
@@ -193,7 +195,7 @@ export default function Menu({ botTyping }) {
                 </div>
               </motion.form>
               
-              {/* Visual connector between input and navbar */}
+              // Visual connector between input and navbar
               <div className={`h-1 w-full backdrop-blur-xl border-l border-r bg-gradient-to-r from-gray-900/90 to-black/90 border-border/20`}></div>
             </motion.div>
           )}
@@ -203,7 +205,7 @@ export default function Menu({ botTyping }) {
           ref={containerRef}
           className="relative backdrop-blur-xl rounded-2xl border flex justify-between items-center px-4 py-2 shadow-xl h-[70px] transition-colors duration-300"
         >
-        {/* Animated Selector */}
+        // Animated Selector
         {activeIndex !== -1 && selectorLeft !== 0 && (
           <motion.div
             className="absolute left-8 top-1/2 w-16 h-16 bg-cyan-500 rounded-full shadow-cyan-500/40 shadow-lg z-0"
@@ -216,7 +218,7 @@ export default function Menu({ botTyping }) {
           />
         )}
 
-        {/* Nav Items */}
+        // Nav Items
         {navItems.map((item, index) => {
           const isActive = pathname === item.href;
           const isBellIcon = item.href === '/notifications';
@@ -243,7 +245,7 @@ export default function Menu({ botTyping }) {
                 transition={{ duration: 0.6 }}
               >
                 {item.icon}
-                {/* Blue dot indicator for unread notifications */}
+                // Blue dot indicator for unread notifications
                 {isBellIcon && unreadCount > 0 && (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -256,8 +258,12 @@ export default function Menu({ botTyping }) {
             </Link>
           );
         })}
-      </div>
+        </div>
       </div>
     </div>
   );
+  */
+  
+  // This return statement ensures nothing is rendered.
+  return null;
 }
